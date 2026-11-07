@@ -15,7 +15,7 @@
 - `src/adapters`: áudio, fala e tradução. Encapsular diferenças entre plataformas.
 - `workers/asr` e `workers/translation`: inferência local em processos separados; não bloquear a interface.
 - Baseline atual: PipeWire + faster-whisper base.en + OPUS/Argos inglês → pt-BR. Windows ainda exige implementação/validação nativas; não declarar suporte testado com base apenas no Linux.
-- Harness, System 1 e gate ainda são trabalho planejado. Manter decisão de rota separada da autorização determinística; nuvem simulada até política, credenciais e orçamento definidos.
+- Infraestrutura inicial do harness existe em `src/core/harness`, `src/core/policy`, `src/core/cascade`, `src/core/audio` e `src/core/observability`. Ainda falta integrá-la ao fluxo de ASR/tradução e treinar o System 1. Manter decisão de rota separada da autorização determinística; nuvem sem execução real até política, credenciais e orçamento definidos.
 
 ## Comportamento e dados
 
