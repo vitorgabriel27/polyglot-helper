@@ -1,0 +1,10 @@
+{
+  "id": "base.en",
+  "repository": "Systran/faster-whisper-base.en",
+  "revision": "3d3d5dee26484f91867d81cb899cfcf72b96be6c",
+  "modelSha256": "2a166925539a16005f14ff328359f9b9adb9dc4fb631bb3b227526862e93e2ef",
+  "files": ["config.json", "model.bin", "tokenizer.json", "vocabulary.txt"],
+  "language": "en",
+  "device": "cpu",
+  "computeType": "int8"
+}
