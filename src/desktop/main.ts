@@ -90,6 +90,8 @@ let settingsQueue: Promise<void> = Promise.resolve();
 let quitting = false;
 let configuring = false;
 let settingsRevision = 0;
+let windowsReady = false;
+let pendingActivation = false;
 const html = path.join(__dirname, '../renderer/index.html');
 const origin = pathToFileURL(html).href;
 const wayland =
@@ -118,6 +120,7 @@ function snapshot(): Snapshot {
   };
 }
 function position(recenter = false) {
+  if (quitting || !notch || notch.isDestroyed()) return;
   const old = notch.getBounds();
   const area = (recenter ? screen.getPrimaryDisplay() : screen.getDisplayMatching(old)).workArea;
   const expanded = ['listening', 'starting', 'error'].includes(controller.state);
@@ -140,6 +143,7 @@ function position(recenter = false) {
     ),
     y: Math.max(area.y, Math.min(y + notchHeight + 8, area.y + area.height - panelHeight)),
   };
+  if (!settingsWindow || settingsWindow.isDestroyed()) return;
   const previousPanel = settingsWindow.getBounds();
   if (
     Object.entries(panel).some(([key, value]) => previousPanel[key as keyof typeof panel] !== value)
@@ -147,10 +151,11 @@ function position(recenter = false) {
     settingsWindow.setBounds(panel);
 }
 function publish() {
-  if (!notch || notch.isDestroyed()) return;
+  if (quitting || !notch || notch.isDestroyed()) return;
   position();
   for (const window of [notch, settingsWindow])
-    if (!window.isDestroyed()) window.webContents.send('helper:state', snapshot());
+    if (window && !window.isDestroyed() && !window.webContents.isDestroyed())
+      window.webContents.send('helper:state', snapshot());
 }
 function run(operation: Promise<void>) {
   void operation.catch((cause) => {
@@ -159,11 +164,21 @@ function run(operation: Promise<void>) {
   });
 }
 function keepAbove() {
-  if (!notch || notch.isDestroyed()) return;
+  if (quitting || !notch || notch.isDestroyed()) return;
   notch.setAlwaysOnTop(true, 'screen-saver');
-  if (!settingsWindow.isFocused()) notch.moveTop();
+  if (!settingsWindow || settingsWindow.isDestroyed() || !settingsWindow.isFocused())
+    notch.moveTop();
 }
 function openSettings() {
+  if (quitting) return;
+  if (!windowsReady) {
+    pendingActivation = true;
+    return;
+  }
+  if (!notch || notch.isDestroyed() || !settingsWindow || settingsWindow.isDestroyed()) {
+    app.quit();
+    return;
+  }
   settingsRevision += 1;
   position();
   settingsWindow.show();
@@ -231,7 +246,7 @@ async function endCapture(pause = false) {
   }
 }
 async function toggle() {
-  if (configuring) return;
+  if (quitting || configuring) return;
   if (!userSettings.onboardingComplete) {
     openSettings();
     return;
@@ -371,7 +386,8 @@ async function applySettings(next: UserSettings) {
   userSettings = structuredClone(next);
   error = null;
   publish();
-  if (next.onboardingComplete) settingsWindow.hide();
+  if (!quitting && next.onboardingComplete && settingsWindow && !settingsWindow.isDestroyed())
+    settingsWindow.hide();
 }
 async function configure(next: UserSettings) {
   configuring = true;
@@ -388,8 +404,13 @@ function harden(window: BrowserWindow) {
 }
 function authorized(event: Electron.IpcMainInvokeEvent) {
   return (
+    !quitting &&
     [notch, settingsWindow].some(
-      (window) => !window.isDestroyed() && event.sender === window.webContents,
+      (window) =>
+        window &&
+        !window.isDestroyed() &&
+        !window.webContents.isDestroyed() &&
+        event.sender === window.webContents,
     ) &&
     event.senderFrame === event.sender.mainFrame &&
     event.senderFrame.url.split('?')[0] === origin
@@ -445,6 +466,27 @@ if (hasLock)
       });
       harden(notch);
       harden(settingsWindow);
+      notch.on('close', (event) => {
+        if (!quitting) {
+          event.preventDefault();
+          app.quit();
+        }
+      });
+      notch.on('closed', () => {
+        windowsReady = false;
+        if (!quitting) app.quit();
+      });
+      settingsWindow.on('close', (event) => {
+        if (!quitting) {
+          event.preventDefault();
+          settingsWindow.hide();
+          keepAbove();
+        }
+      });
+      settingsWindow.on('closed', () => {
+        windowsReady = false;
+        if (!quitting) app.quit();
+      });
       notch.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
       settingsWindow.setAlwaysOnTop(true, 'screen-saver');
       notch.on('blur', keepAbove);
@@ -452,6 +494,7 @@ if (hasLock)
         if (!above) keepAbove();
       });
       settingsWindow.on('blur', () => {
+        if (quitting || settingsWindow.isDestroyed()) return;
         if (userSettings.onboardingComplete) settingsWindow.hide();
         keepAbove();
       });
@@ -502,6 +545,8 @@ if (hasLock)
         notch.loadFile(html),
         settingsWindow.loadFile(html, { query: { view: 'settings' } }),
       ]);
+      if (quitting || notch.isDestroyed() || settingsWindow.isDestroyed()) return;
+      windowsReady = true;
       shortcutAvailable =
         !isTest &&
         globalShortcut.register('CommandOrControl+Shift+Space', () => {
@@ -536,21 +581,25 @@ if (hasLock)
       }
       notch.showInactive();
       publish();
-      if (!userSettings.onboardingComplete) openSettings();
-      else void refreshSources();
+      if (pendingActivation || !userSettings.onboardingComplete) {
+        pendingActivation = false;
+        openSettings();
+      } else void refreshSources();
     })
     .catch((cause) => {
-      console.error(cause);
-      app.exit(1);
+      if (!quitting) {
+        console.error(cause);
+        app.exit(1);
+      }
     });
-app.on('second-instance', () => {
-  if (settingsWindow) openSettings();
-});
+app.on('second-instance', () => openSettings());
 app.on('window-all-closed', () => app.quit());
 app.on('before-quit', (event) => {
   if (quitting) return;
   event.preventDefault();
   quitting = true;
+  windowsReady = false;
+  pendingActivation = false;
   stopDemo?.();
   controller.stop();
   void Promise.allSettled([capture.stop(), stopSpeech(), settingsQueue]).then(() => app.quit());

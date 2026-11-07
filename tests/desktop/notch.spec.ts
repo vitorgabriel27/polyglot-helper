@@ -254,3 +254,102 @@ test('saved setup and preferences survive relaunch; autostart is opt-in', async 
     await rm(profile, { recursive: true, force: true });
   }
 });
+
+test('closing settings through the window manager hides it and allows reopening', async () => {
+  const profile = await mkdtemp(path.join(os.tmpdir(), 'helper-lifecycle-'));
+  const app = await launch(profile);
+  try {
+    const views = await windows(app);
+    await expect(views.settings.getByRole('heading', { name: 'Vamos começar.' })).toBeVisible();
+    await views.settings.getByRole('button', { name: 'Salvar e continuar' }).click();
+    await views.notch.getByRole('button', { name: 'Abrir configurações' }).click();
+    await app.evaluate(({ BrowserWindow }) => {
+      BrowserWindow.getAllWindows()
+        .find((window) => window.webContents.getURL().includes('view=settings'))!
+        .close();
+    });
+    expect(app.windows()).toHaveLength(2);
+    const environment = Object.fromEntries(
+      Object.entries(process.env).filter(
+        (entry): entry is [string, string] => entry[1] !== undefined,
+      ),
+    );
+    delete environment.ELECTRON_RUN_AS_NODE;
+    await promisify(execFile)(
+      process.execPath,
+      [
+        path.resolve('node_modules/electron/cli.js'),
+        '.',
+        '--smoke-test',
+        ...(process.platform === 'linux'
+          ? [
+              process.env.HELPER_TEST_WAYLAND ? '--ozone-platform=wayland' : '--ozone-platform=x11',
+              '--disable-gpu',
+            ]
+          : []),
+      ],
+      { env: { ...environment, HELPER_TEST_PROFILE: profile }, timeout: 10000 },
+    );
+    await expect(views.settings.getByRole('heading', { name: 'Do seu jeito.' })).toBeVisible();
+    expect(
+      await app.evaluate(({ BrowserWindow }) =>
+        BrowserWindow.getAllWindows()
+          .find((window) => window.webContents.getURL().includes('view=settings'))!
+          .isVisible(),
+      ),
+    ).toBe(true);
+  } finally {
+    await app.close();
+    await rm(profile, { recursive: true, force: true });
+  }
+});
+
+test('a second-instance event cannot reopen a destroyed notch during shutdown', async () => {
+  const profile = await mkdtemp(path.join(os.tmpdir(), 'helper-lifecycle-'));
+  let app = await launch(profile);
+  try {
+    await windows(app);
+    const exited = app.waitForEvent('close');
+    await app.evaluate(({ app, BrowserWindow }) => {
+      const notch = BrowserWindow.getAllWindows().find((window) =>
+        window.webContents.getURL().endsWith('/index.html'),
+      )!;
+      notch.destroy();
+      // Regression for the reported stack: a stale primary receives a new launch request.
+      app.emit('second-instance', {}, [], process.cwd());
+    });
+    await exited;
+    app = await launch(profile);
+    const views = await windows(app);
+    await expect(views.notch.getByRole('button', { name: 'Abrir configurações' })).toBeVisible();
+  } finally {
+    await app.close();
+    await rm(profile, { recursive: true, force: true });
+  }
+});
+
+test('closing the notch normally exits the active app and releases its profile lock', async () => {
+  const profile = await mkdtemp(path.join(os.tmpdir(), 'helper-lifecycle-'));
+  let app = await launch(profile);
+  try {
+    let views = await windows(app);
+    await views.settings.getByRole('button', { name: 'Salvar e continuar' }).click();
+    await views.notch.getByRole('button', { name: 'Iniciar demonstração', exact: true }).click();
+    await expect(views.notch.locator('.original')).toContainText('Take your');
+    const exited = app.waitForEvent('close');
+    await app.evaluate(({ BrowserWindow }) => {
+      BrowserWindow.getAllWindows()
+        .find((window) => window.webContents.getURL().endsWith('/index.html'))!
+        .close();
+    });
+    await exited;
+    app = await launch(profile);
+    views = await windows(app);
+    const snapshot = await views.notch.evaluate(() => window.polyglotHelper.snapshot());
+    expect(snapshot.state).toBe('idle');
+    expect(snapshot.settings.onboardingComplete).toBe(true);
+  } finally {
+    await app.close();
+    await rm(profile, { recursive: true, force: true });
+  }
+});
