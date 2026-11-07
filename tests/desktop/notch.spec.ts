@@ -353,3 +353,21 @@ test('closing the notch normally exits the active app and releases its profile l
     await rm(profile, { recursive: true, force: true });
   }
 });
+
+test('captures current settings and notch screens for visual review', async () => {
+  const profile = await mkdtemp(path.join(os.tmpdir(), 'helper-screenshots-'));
+  const app = await launch(profile);
+  try {
+    const views = await windows(app);
+    await expect(views.settings.getByRole('heading', { name: 'Vamos começar.' })).toBeVisible();
+    await views.settings.screenshot({ path: path.resolve('test-results/polyglot-settings.png') });
+    await views.settings.getByRole('button', { name: 'Salvar e continuar' }).click();
+    await expect(
+      views.notch.getByRole('button', { name: 'Iniciar demonstração', exact: true }),
+    ).toBeVisible();
+    await views.notch.screenshot({ path: path.resolve('test-results/polyglot-notch.png') });
+  } finally {
+    await app.close();
+    await rm(profile, { recursive: true, force: true });
+  }
+});
