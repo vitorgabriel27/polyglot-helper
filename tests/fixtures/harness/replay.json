@@ -1,0 +1,27 @@
+{
+  "fixtureVersion": 1,
+  "description": "Replay offline de controles do harness; payloads de texto/áudio omitidos.",
+  "cases": [
+    {
+      "id": "offline-cloud-proposal",
+      "policy": "offline-strict",
+      "expected": "deny:destination_denied"
+    },
+    {
+      "id": "stale-generation",
+      "policy": "generation-changed",
+      "expected": "deny:generation_stale"
+    },
+    {
+      "id": "revoked-policy",
+      "policy": "version-changed-before-execution",
+      "expected": "deny:authorization_stale"
+    },
+    {
+      "id": "authorization-replay",
+      "policy": "single-use",
+      "expected": "deny:authorization_replayed"
+    },
+    { "id": "expired-ring-buffer", "policy": "window-evicted", "expected": "abstain:expired" }
+  ]
+}
