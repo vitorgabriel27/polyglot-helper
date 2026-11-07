@@ -135,6 +135,8 @@ Baseline local em inglês implementado: captura Linux → PCM → segmentador �
 
 ## M5 — Adicionar tradução e pronúncia · P0
 
+Tradução local inicial implementada e validada na notch: original imediato, português abaixo, cancelamento ao desativar e proteção contra resposta atrasada. TR-01/02/03 têm implementação inicial e regressões, mas o marco segue parcial: avaliação contextual ampla (TR-04), IPA e validação Windows ainda pendentes. Ver [TRADUCAO-LOCAL.md](validation/TRADUCAO-LOCAL.md).
+
 - [ ] **TR-01** Integrar tradução de segmentos estáveis com contexto curto, limite de duração e cancelamento; tradução desligada não cria novas chamadas.
 - [ ] **TR-02** Associar tradução ao ID/revisão; testar resposta fora de ordem, troca de idioma e pausa durante uma chamada.
 - [ ] **TR-03** Manter original visível em falha da tradução; identificar tradução pendente e impedir associação com outra frase.
@@ -169,13 +171,14 @@ Baseline local em inglês implementado: captura Linux → PCM → segmentador �
 
 ## Registro de progresso
 
-| Data       | Marco/tarefa                         | Evidência                                         | Resultado / próximo passo                                                                                                                                                |
-| ---------- | ------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 07/11/2026 | Planejamento                         | Este arquivo e ARQUITETURA.md                     | Plano salvo; Windows e Linux incluídos                                                                                                                                   |
-| 07/11/2026 | ASR local inicial                    | workers/asr; core/speech; testes de ASR           | Whisper base.en/CPU preparado, worker offline e caminho PipeWire testados; Parakeet v3 candidato; Windows/tradução/harness pendentes                                     |
-| 07/11/2026 | Captura e onboarding / UX-01 e UX-02 | src/adapters/audio; settings-store; testes        | Notch aceita pelo usuário; captura local Linux e preferências implementadas; autostart opt-in; Windows nativo pendente                                                   |
-| 07/11/2026 | Base desktop / BASE-01 e BASE-05     | src/desktop; tests; DESENVOLVIMENTO.md            | Pasta oficial e main definidas; notch/demo e IPC restrito; checks locais; Windows nativo adiado por decisão do usuário                                                   |
-| 07/11/2026 | Pesquisa / novo MR                   | research/HARNESS-CASCATAS.md                      | Artigo lido; arquitetura adaptada; 15 tarefas de pesquisa adicionadas; implementação pendente; prazo global a reestimar                                                  |
-| 07/11/2026 | M0 / DEC-02, DEC-04, DEC-05          | decisions/M0-ESCOPO.md; validation/M0-AMBIENTE.md | Política de suporte e recorte registrados; Linux identificado; Windows dual boot confirmado pelo usuário; comparar remoto/local antes de decidir; DEC-01/03/06 pendentes |
+| Data       | Marco/tarefa                         | Evidência                                                | Resultado / próximo passo                                                                                                                                                |
+| ---------- | ------------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 07/11/2026 | Planejamento                         | Este arquivo e ARQUITETURA.md                            | Plano salvo; Windows e Linux incluídos                                                                                                                                   |
+| 07/11/2026 | Tradução local inicial               | core/translation; workers/translation; TRADUCAO-LOCAL.md | Inglês → pt-BR abaixo da transcrição; opção salva e cancelamento; 22 unitários e 6 desktop passaram com Node 23                                                          |
+| 07/11/2026 | ASR local inicial                    | workers/asr; core/speech; testes de ASR                  | Whisper base.en/CPU preparado, worker offline e caminho PipeWire testados; Parakeet v3 candidato; Windows/tradução/harness pendentes                                     |
+| 07/11/2026 | Captura e onboarding / UX-01 e UX-02 | src/adapters/audio; settings-store; testes               | Notch aceita pelo usuário; captura local Linux e preferências implementadas; autostart opt-in; Windows nativo pendente                                                   |
+| 07/11/2026 | Base desktop / BASE-01 e BASE-05     | src/desktop; tests; DESENVOLVIMENTO.md                   | Pasta oficial e main definidas; notch/demo e IPC restrito; checks locais; Windows nativo adiado por decisão do usuário                                                   |
+| 07/11/2026 | Pesquisa / novo MR                   | research/HARNESS-CASCATAS.md                             | Artigo lido; arquitetura adaptada; 15 tarefas de pesquisa adicionadas; implementação pendente; prazo global a reestimar                                                  |
+| 07/11/2026 | M0 / DEC-02, DEC-04, DEC-05          | decisions/M0-ESCOPO.md; validation/M0-AMBIENTE.md        | Política de suporte e recorte registrados; Linux identificado; Windows dual boot confirmado pelo usuário; comparar remoto/local antes de decidir; DEC-01/03/06 pendentes |
 
 Ao encerrar uma sessão de trabalho: marcar apenas tarefas aceitas, registrar evidência e bloqueios, atualizar estimativa se houver descoberta material e indicar a próxima tarefa executável. Não iniciar M3 remoto sem DEC-03.

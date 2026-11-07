@@ -12,7 +12,7 @@ A comparação passa a incluir local-only, cloud-only e cascata híbrida; a deci
 
 ## Configuração inicial e captura local — atualização
 
-Onboarding de primeira abertura, preferências persistentes e autostart opt-in implementados. Abrir no login não inicia captura. Linux usa X11/XWayland por padrão quando disponível para reforçar posição/sobreposição; Wayland nativo é experimental. Captura PipeWire conectada a worker ASR local base.en/CPU, com janelas limitadas, parciais/finais e cancelamento. [Decisão ASR e comparação Parakeet](decisions/ASR-LOCAL.md). Ver [decisão detalhada](decisions/OVERLAY-PREFERENCIAS.md).
+Onboarding de primeira abertura, preferências persistentes e autostart opt-in implementados. Abrir no login não inicia captura. Linux usa X11/XWayland por padrão quando disponível para reforçar posição/sobreposição; Wayland nativo é experimental. Captura PipeWire conectada a worker ASR local base.en/CPU, com janelas limitadas, parciais/finais e cancelamento. Tradução local inglês → pt-BR em worker separado já publica a linha inferior, com controle de revisões e falha independente do ASR. [Decisão ASR e comparação Parakeet](decisions/ASR-LOCAL.md). Ver [decisão detalhada](decisions/OVERLAY-PREFERENCIAS.md).
 
 ## 1. Produto e escopo
 

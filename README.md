@@ -13,7 +13,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Notch com configuração inicial única, preferências persistentes e início com o sistema opcional. Linux já oferece captura local e transcrição real em inglês com modelo preparado por `pnpm setup:asr`. Tradução real, IPA para áudio, harness e APIs ainda não conectados. Windows preparado para validação posterior. Veja [execução no Linux/Windows e verificações](docs/DESENVOLVIMENTO.md).
+Notch com configuração inicial única, preferências persistentes e início com o sistema opcional. Linux já oferece captura local e transcrição real em inglês e tradução para português brasileiro, com modelos preparados por `pnpm setup:local`. IPA para áudio, harness e APIs ainda não conectados. Windows preparado para validação posterior. Veja [execução no Linux/Windows e verificações](docs/DESENVOLVIMENTO.md).
 
 ## Explorar
 
