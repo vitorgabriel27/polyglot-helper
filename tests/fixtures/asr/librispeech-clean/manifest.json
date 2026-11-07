@@ -1,0 +1,216 @@
+{
+  "dataset": "LibriSpeech test-clean",
+  "license": "CC BY 4.0",
+  "attribution": "LibriSpeech (c) 2014 by Vassil Panayotov",
+  "source": "https://www.openslr.org/12/",
+  "selection": "8 short utterances from one test-clean speaker; clean read speech only. Speed and noise variants will be derived locally.",
+  "sampleRate": 16000,
+  "files": [
+    {
+      "id": "6930-75918-0000",
+      "speaker": "6930",
+      "book": "75918",
+      "sourceFlacSha256": "9ce35224156f071ab58eb7feb8a5ceae600f6f9f353da2a6cbf797b6b1ac8a23",
+      "wavSha256": "103c3f15eb3715ebc6243d142244128a3ac39b6bfae315baa6b8dc4a8be14aa8",
+      "durationSeconds": 3.505,
+      "reference": "CONCORD RETURNED TO ITS PLACE AMIDST THE TENTS"
+    },
+    {
+      "id": "6930-75918-0002",
+      "speaker": "6930",
+      "book": "75918",
+      "sourceFlacSha256": "74ecfd628f49dca71995972c075fcc9904df804d49a4eb5b11fb712b3584f789",
+      "wavSha256": "ca418189ed1db4ce1bf5e6940d51a9ce870d4d52f3ef9019ccdbb2189d1a0a9c",
+      "durationSeconds": 5.025,
+      "reference": "CONGRATULATIONS WERE POURED IN UPON THE PRINCESS EVERYWHERE DURING HER JOURNEY"
+    },
+    {
+      "id": "6930-75918-0006",
+      "speaker": "6930",
+      "book": "75918",
+      "sourceFlacSha256": "4bed112ebfdba58ec061abd3fe013f89946863e9c51e8a83b50a5eb7afb9ce65",
+      "wavSha256": "b4ee5871dbb5084f596aa076453afc255f1416c83aec19d05e324ef4e062fc4d",
+      "durationSeconds": 5.85,
+      "reference": "THIS HAS INDEED BEEN A HARASSING DAY CONTINUED THE YOUNG MAN HIS EYES FIXED UPON HIS FRIEND"
+    },
+    {
+      "id": "6930-75918-0007",
+      "speaker": "6930",
+      "book": "75918",
+      "sourceFlacSha256": "059969de8f6b780e1a4982805e977c3e73e40d3759c8fa8cb0cb8fabd9eb5b27",
+      "wavSha256": "c6c28e12656aff6cec3484ed10cfc625d17d62f63a065b91ad3c510716e2c7e0",
+      "durationSeconds": 3.315,
+      "reference": "YOU WILL BE FRANK WITH ME I ALWAYS AM"
+    },
+    {
+      "id": "6930-75918-0008",
+      "speaker": "6930",
+      "book": "75918",
+      "sourceFlacSha256": "ac916dcbcbb3240dcdbf3523b300345e33cdc3ebdfdd3538be49f208c134c4dd",
+      "wavSha256": "01333d888f243ad4dcb166d6a3164c7c1e835bf65f9d92f15a59b63bec6792eb",
+      "durationSeconds": 4.785,
+      "reference": "CAN YOU IMAGINE WHY BUCKINGHAM HAS BEEN SO VIOLENT I SUSPECT"
+    },
+    {
+      "id": "6930-75918-0010",
+      "speaker": "6930",
+      "book": "75918",
+      "sourceFlacSha256": "fa67866b5efc5df7fe35e2f27ad8f9d1f344f7848ce30d8b131f77a372f96add",
+      "wavSha256": "59b07a4b926d378030f2de5bd64f9a8318b3bff3942e7a6e359832c6a38152dc",
+      "durationSeconds": 3.035,
+      "reference": "I CAN PERCEIVE LOVE CLEARLY ENOUGH"
+    },
+    {
+      "id": "6930-75918-0011",
+      "speaker": "6930",
+      "book": "75918",
+      "sourceFlacSha256": "20e49ab7c5b418f379e775f2966616d1bd60fa6ef5d1ffc6d99de5b075e75284",
+      "wavSha256": "f5413a1368750191bbb12ced5bb5c7f605594254359ddbc8410941d9793c29a5",
+      "durationSeconds": 3.195,
+      "reference": "I AM CONVINCED OF WHAT I SAY SAID THE COUNT"
+    },
+    {
+      "id": "6930-75918-0012",
+      "speaker": "6930",
+      "book": "75918",
+      "sourceFlacSha256": "c158fe562a03db715f581485e9d372003163a272113f38fe45336415997d0b5f",
+      "wavSha256": "fd64fa604791bb9e8adfee8278d4d86ac5cdfa79efeb4a61cd69b81b2a627e2f",
+      "durationSeconds": 1.94,
+      "reference": "IT IS ANNOYANCE THEN"
+    }
+  ],
+  "variants": [
+    {
+      "id": "6930-75918-0000",
+      "condition": "fast-1.2x",
+      "wav": "6930-75918-0000-fast-1.2x.wav",
+      "wavSha256": "0295088f1b638cdcca543338b226df5d380eb870d6deba310292380041f96640",
+      "reference": "CONCORD RETURNED TO ITS PLACE AMIDST THE TENTS",
+      "sourceWavSha256": "103c3f15eb3715ebc6243d142244128a3ac39b6bfae315baa6b8dc4a8be14aa8"
+    },
+    {
+      "id": "6930-75918-0000",
+      "condition": "noise-12db",
+      "wav": "6930-75918-0000-noise-12db.wav",
+      "wavSha256": "ffa50d5030d4c8b4a8f7d2c995675cd91c09c8afa092b114c27fa22cae7aa58e",
+      "reference": "CONCORD RETURNED TO ITS PLACE AMIDST THE TENTS",
+      "sourceWavSha256": "103c3f15eb3715ebc6243d142244128a3ac39b6bfae315baa6b8dc4a8be14aa8"
+    },
+    {
+      "id": "6930-75918-0002",
+      "condition": "fast-1.2x",
+      "wav": "6930-75918-0002-fast-1.2x.wav",
+      "wavSha256": "048a17051ed8d92d73f090c68a5a2cb11af7a4608c4aad9006d072333e2cb168",
+      "reference": "CONGRATULATIONS WERE POURED IN UPON THE PRINCESS EVERYWHERE DURING HER JOURNEY",
+      "sourceWavSha256": "ca418189ed1db4ce1bf5e6940d51a9ce870d4d52f3ef9019ccdbb2189d1a0a9c"
+    },
+    {
+      "id": "6930-75918-0002",
+      "condition": "noise-12db",
+      "wav": "6930-75918-0002-noise-12db.wav",
+      "wavSha256": "81be9fd2fb086c639d4385ae28e6d1d0dd59e8e7dab4529b219552dfeb1c37fc",
+      "reference": "CONGRATULATIONS WERE POURED IN UPON THE PRINCESS EVERYWHERE DURING HER JOURNEY",
+      "sourceWavSha256": "ca418189ed1db4ce1bf5e6940d51a9ce870d4d52f3ef9019ccdbb2189d1a0a9c"
+    },
+    {
+      "id": "6930-75918-0006",
+      "condition": "fast-1.2x",
+      "wav": "6930-75918-0006-fast-1.2x.wav",
+      "wavSha256": "ab27a441b110817fa6b181899f178100fe6a4780ffc50f7826362aa915f4c2d8",
+      "reference": "THIS HAS INDEED BEEN A HARASSING DAY CONTINUED THE YOUNG MAN HIS EYES FIXED UPON HIS FRIEND",
+      "sourceWavSha256": "b4ee5871dbb5084f596aa076453afc255f1416c83aec19d05e324ef4e062fc4d"
+    },
+    {
+      "id": "6930-75918-0006",
+      "condition": "noise-12db",
+      "wav": "6930-75918-0006-noise-12db.wav",
+      "wavSha256": "b864c9791fc0dae0a91d95fbae881ee5854f9b58645e8b8e98eaecf9e0c8b233",
+      "reference": "THIS HAS INDEED BEEN A HARASSING DAY CONTINUED THE YOUNG MAN HIS EYES FIXED UPON HIS FRIEND",
+      "sourceWavSha256": "b4ee5871dbb5084f596aa076453afc255f1416c83aec19d05e324ef4e062fc4d"
+    },
+    {
+      "id": "6930-75918-0007",
+      "condition": "fast-1.2x",
+      "wav": "6930-75918-0007-fast-1.2x.wav",
+      "wavSha256": "ce27b3b0f6b7479c68fa90af9116e3d21be00ffb59fe5b612858fad224d12ce0",
+      "reference": "YOU WILL BE FRANK WITH ME I ALWAYS AM",
+      "sourceWavSha256": "c6c28e12656aff6cec3484ed10cfc625d17d62f63a065b91ad3c510716e2c7e0"
+    },
+    {
+      "id": "6930-75918-0007",
+      "condition": "noise-12db",
+      "wav": "6930-75918-0007-noise-12db.wav",
+      "wavSha256": "46e402725080627f5414edc64404156c59e8d9e755df28bd2411b41f11640640",
+      "reference": "YOU WILL BE FRANK WITH ME I ALWAYS AM",
+      "sourceWavSha256": "c6c28e12656aff6cec3484ed10cfc625d17d62f63a065b91ad3c510716e2c7e0"
+    },
+    {
+      "id": "6930-75918-0008",
+      "condition": "fast-1.2x",
+      "wav": "6930-75918-0008-fast-1.2x.wav",
+      "wavSha256": "4fcd197ba647764301ee5e0054e41df91903644d906ec99961b20f903c0465ef",
+      "reference": "CAN YOU IMAGINE WHY BUCKINGHAM HAS BEEN SO VIOLENT I SUSPECT",
+      "sourceWavSha256": "01333d888f243ad4dcb166d6a3164c7c1e835bf65f9d92f15a59b63bec6792eb"
+    },
+    {
+      "id": "6930-75918-0008",
+      "condition": "noise-12db",
+      "wav": "6930-75918-0008-noise-12db.wav",
+      "wavSha256": "2691e8e1ffa4c12e3730aa3822c9d75a62c95cb118e523af95aad54b7ee01354",
+      "reference": "CAN YOU IMAGINE WHY BUCKINGHAM HAS BEEN SO VIOLENT I SUSPECT",
+      "sourceWavSha256": "01333d888f243ad4dcb166d6a3164c7c1e835bf65f9d92f15a59b63bec6792eb"
+    },
+    {
+      "id": "6930-75918-0010",
+      "condition": "fast-1.2x",
+      "wav": "6930-75918-0010-fast-1.2x.wav",
+      "wavSha256": "fe5903d8c03d5ed0079d6e8eb1aa9792b9d922ccbf747eefe5ef8271cbe67908",
+      "reference": "I CAN PERCEIVE LOVE CLEARLY ENOUGH",
+      "sourceWavSha256": "59b07a4b926d378030f2de5bd64f9a8318b3bff3942e7a6e359832c6a38152dc"
+    },
+    {
+      "id": "6930-75918-0010",
+      "condition": "noise-12db",
+      "wav": "6930-75918-0010-noise-12db.wav",
+      "wavSha256": "e92156717dc682fb7c65a8a30c297444c4f66ad127580f74ff19d461f02aef07",
+      "reference": "I CAN PERCEIVE LOVE CLEARLY ENOUGH",
+      "sourceWavSha256": "59b07a4b926d378030f2de5bd64f9a8318b3bff3942e7a6e359832c6a38152dc"
+    },
+    {
+      "id": "6930-75918-0011",
+      "condition": "fast-1.2x",
+      "wav": "6930-75918-0011-fast-1.2x.wav",
+      "wavSha256": "a586e9dded9362a4bfda9e8bafc51f4920fd462808b50cf6ad79ee47feb499e2",
+      "reference": "I AM CONVINCED OF WHAT I SAY SAID THE COUNT",
+      "sourceWavSha256": "f5413a1368750191bbb12ced5bb5c7f605594254359ddbc8410941d9793c29a5"
+    },
+    {
+      "id": "6930-75918-0011",
+      "condition": "noise-12db",
+      "wav": "6930-75918-0011-noise-12db.wav",
+      "wavSha256": "bcfc8b7d16fd661afa88c85f0791c6b508148247086cb44d7e751b767528d37a",
+      "reference": "I AM CONVINCED OF WHAT I SAY SAID THE COUNT",
+      "sourceWavSha256": "f5413a1368750191bbb12ced5bb5c7f605594254359ddbc8410941d9793c29a5"
+    },
+    {
+      "id": "6930-75918-0012",
+      "condition": "fast-1.2x",
+      "wav": "6930-75918-0012-fast-1.2x.wav",
+      "wavSha256": "a7b30b7a6f436a80229b779393f081d3bca95ffb08d93570cb7a06581ed9e1cf",
+      "reference": "IT IS ANNOYANCE THEN",
+      "sourceWavSha256": "fd64fa604791bb9e8adfee8278d4d86ac5cdfa79efeb4a61cd69b81b2a627e2f"
+    },
+    {
+      "id": "6930-75918-0012",
+      "condition": "noise-12db",
+      "wav": "6930-75918-0012-noise-12db.wav",
+      "wavSha256": "dd19616953bee967170a85b526637c2ae7c8fd7e4b37e345eaba46f37ba0e27b",
+      "reference": "IT IS ANNOYANCE THEN",
+      "sourceWavSha256": "fd64fa604791bb9e8adfee8278d4d86ac5cdfa79efeb4a61cd69b81b2a627e2f"
+    }
+  ],
+  "variantMethod": {
+    "fast": "Playback rate 1.2x resampling; pitch also rises.",
+    "noise": "Deterministic white noise mixed at nominal 12 dB SNR; seed from utterance ID."
+  }
+}

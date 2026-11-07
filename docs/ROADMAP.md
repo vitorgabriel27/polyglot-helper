@@ -11,7 +11,7 @@ Atualizado em 07/11/2026. Status: piloto local Linux em evolução, com notch ac
 
 Ordem prática para continuar, mantendo os IDs abaixo:
 
-1. **TR-04 + STT-04:** preparar referências e medir qualidade/latência do baseline local; comparar custo e desempenho antes de decidir a escalada remota (DEC-03). Duas frases traduzidas não substituem benchmark.
+1. **TR-04 + STT-04:** ensaio inicial de tradução disponível em [BENCHMARK-TRADUCAO.md](validation/BENCHMARK-TRADUCAO.md), com 30 frases e 90 observações; revisão bilíngue pendente. Harness reproduzível para áudio JFK e WER preparado em [BENCHMARK-ASR.md](validation/BENCHMARK-ASR.md); ainda requer execução e dataset variado. Próximo: medir qualidade/latência local e ampliar referências antes de comparar cascatas.
 2. **STT-05 + LIN-01/02 + UX-04:** validar sessões prolongadas, ciclos de captura, dispositivos físicos, troca entre aplicativos, fullscreen e monitores no Linux.
 3. **MR-01/02/04/07/08:** definir contratos do harness e implementar gate, cascata limitada, replay e trilha sanitizada com nuvem simulada. O baseline atual ainda não integra o harness.
 4. **DEC-01/06 + WIN-01/02/03:** identificar Windows no próximo boot, clonar o repositório e implementar/validar captura e integração nativas. Trabalho Linux pode avançar enquanto essa máquina não é testada.
@@ -205,3 +205,7 @@ As três propostas acima foram incorporadas do arquivo temporário `new_features
 | 07/11/2026 | M0 / DEC-02, DEC-04, DEC-05          | decisions/M0-ESCOPO.md; validation/M0-AMBIENTE.md        | Política de suporte e recorte registrados; Linux identificado; Windows dual boot confirmado pelo usuário; comparar remoto/local antes de decidir; DEC-01/03/06 pendentes |
 
 Ao encerrar uma sessão de trabalho: marcar apenas tarefas aceitas, registrar evidência e bloqueios, atualizar estimativa se houver descoberta material e indicar a próxima tarefa executável. Não iniciar M3 remoto sem DEC-03.
+
+## Manutenção da base
+
+Modularização inicial executada: apresentação de notch/configurações, bridge e store separados no renderer; posicionamento, segurança e autostart extraídos no desktop. Plano e mapa em [MODULARIZACAO.md](MODULARIZACAO.md). Sem alteração do escopo funcional dos marcos.

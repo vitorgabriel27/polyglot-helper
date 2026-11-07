@@ -27,7 +27,9 @@
     "test:translation": "node scripts/test-translation.mjs",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "benchmark:translation": "node scripts/benchmark-translation.mjs",
+    "benchmark:asr": "node scripts/benchmark-asr.mjs"
   },
   "dependencies": {
     "react": "19.3.1",

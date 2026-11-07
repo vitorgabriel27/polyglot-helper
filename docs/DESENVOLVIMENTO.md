@@ -141,3 +141,7 @@ pnpm check
 ```
 
 `check` inclui verificação de formatação antes dos checks de código, testes e build; o CI existente usa o mesmo comando. Arquivos gerados, modelos, ambiente Python e lockfiles não são reformatados. O workspace VS Code recomenda as extensões Prettier/ESLint e habilita formatação ao salvar nas linguagens suportadas.
+
+## Avaliação reproduzível de tradução
+
+`pnpm benchmark:translation` executa 30 frases de desenvolvimento com três repetições por frase usando o worker local. Requer os modelos já preparados; não captura nem usa rede. Salva saídas, referências, tempos e metadados em `test-results/benchmark-translation`. Consulte [protocolo, resultados e limitações](validation/BENCHMARK-TRADUCAO.md). A qualidade depende de revisão bilíngue; esse ensaio não mede latência de legendagem completa.

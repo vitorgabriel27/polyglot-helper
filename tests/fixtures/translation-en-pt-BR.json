@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "provenance": "Original examples and draft pt-BR references authored for PolyglotHelper; not user captures. Development set, not a frozen held-out test. References require bilingual review.",
+  "samples": [
+    {
+      "id": "tr-01",
+      "category": "everyday",
+      "source": "Hello, how are you?",
+      "reference": "Olá, como você está?"
+    },
+    {
+      "id": "tr-02",
+      "category": "everyday",
+      "source": "The book is on the table.",
+      "reference": "O livro está em cima da mesa."
+    },
+    {
+      "id": "tr-03",
+      "category": "everyday",
+      "source": "Could you open the window, please?",
+      "reference": "Você poderia abrir a janela, por favor?"
+    },
+    {
+      "id": "tr-04",
+      "category": "everyday",
+      "source": "I will call you tomorrow morning.",
+      "reference": "Vou ligar para você amanhã de manhã."
+    },
+    {
+      "id": "tr-05",
+      "category": "everyday",
+      "source": "We have been waiting for twenty minutes.",
+      "reference": "Estamos esperando há vinte minutos."
+    },
+    {
+      "id": "tr-06",
+      "category": "everyday",
+      "source": "She does not drink coffee.",
+      "reference": "Ela não toma café."
+    },
+    {
+      "id": "tr-07",
+      "category": "everyday",
+      "source": "Where is the nearest train station?",
+      "reference": "Onde fica a estação de trem mais próxima?"
+    },
+    {
+      "id": "tr-08",
+      "category": "everyday",
+      "source": "I used to live near the beach.",
+      "reference": "Eu morava perto da praia."
+    },
+    {
+      "id": "tr-09",
+      "category": "everyday",
+      "source": "If it rains, we will stay home.",
+      "reference": "Se chover, vamos ficar em casa."
+    },
+    {
+      "id": "tr-10",
+      "category": "everyday",
+      "source": "There are only three tickets left.",
+      "reference": "Só restam três ingressos."
+    },
+    {
+      "id": "tr-11",
+      "category": "idiom",
+      "source": "It is raining cats and dogs.",
+      "reference": "Está chovendo muito."
+    },
+    {
+      "id": "tr-12",
+      "category": "idiom",
+      "source": "That exam was a piece of cake.",
+      "reference": "Aquela prova foi muito fácil."
+    },
+    {
+      "id": "tr-13",
+      "category": "idiom",
+      "source": "Let us break the ice.",
+      "reference": "Vamos quebrar o gelo."
+    },
+    {
+      "id": "tr-14",
+      "category": "idiom",
+      "source": "You hit the nail on the head.",
+      "reference": "Você acertou em cheio."
+    },
+    {
+      "id": "tr-15",
+      "category": "idiom",
+      "source": "I am feeling under the weather.",
+      "reference": "Estou me sentindo indisposto."
+    },
+    {
+      "id": "tr-16",
+      "category": "idiom",
+      "source": "This phone costs an arm and a leg.",
+      "reference": "Este telefone custa os olhos da cara."
+    },
+    {
+      "id": "tr-17",
+      "category": "idiom",
+      "source": "Do not give up on your dreams.",
+      "reference": "Não desista dos seus sonhos."
+    },
+    {
+      "id": "tr-18",
+      "category": "idiom",
+      "source": "We need to figure out what went wrong.",
+      "reference": "Precisamos descobrir o que deu errado."
+    },
+    {
+      "id": "tr-19",
+      "category": "idiom",
+      "source": "Please turn down the music.",
+      "reference": "Por favor, abaixe o volume da música."
+    },
+    {
+      "id": "tr-20",
+      "category": "idiom",
+      "source": "I am looking forward to meeting you.",
+      "reference": "Estou ansioso para conhecer você."
+    },
+    {
+      "id": "tr-21",
+      "category": "context",
+      "source": "The bank closes at four in the afternoon.",
+      "reference": "O banco fecha às quatro da tarde."
+    },
+    {
+      "id": "tr-22",
+      "category": "context",
+      "source": "They sat on the bank of the river.",
+      "reference": "Eles se sentaram na margem do rio."
+    },
+    {
+      "id": "tr-23",
+      "category": "context",
+      "source": "Please save the file before closing the application.",
+      "reference": "Salve o arquivo antes de fechar o aplicativo."
+    },
+    {
+      "id": "tr-24",
+      "category": "context",
+      "source": "The meeting has been postponed until Friday.",
+      "reference": "A reunião foi adiada para sexta-feira."
+    },
+    {
+      "id": "tr-25",
+      "category": "context",
+      "source": "You should not share your password with anyone.",
+      "reference": "Você não deve compartilhar sua senha com ninguém."
+    },
+    {
+      "id": "tr-26",
+      "category": "context",
+      "source": "The temperature dropped to minus five degrees.",
+      "reference": "A temperatura caiu para menos cinco graus."
+    },
+    {
+      "id": "tr-27",
+      "category": "context",
+      "source": "I paid twelve dollars and fifty cents.",
+      "reference": "Paguei doze dólares e cinquenta centavos."
+    },
+    {
+      "id": "tr-28",
+      "category": "context",
+      "source": "Although he was tired, he finished the work.",
+      "reference": "Embora estivesse cansado, ele terminou o trabalho."
+    },
+    {
+      "id": "tr-29",
+      "category": "context",
+      "source": "By the time we arrived, the movie had already started.",
+      "reference": "Quando chegamos, o filme já tinha começado."
+    },
+    {
+      "id": "tr-30",
+      "category": "context",
+      "source": "Would you mind explaining that one more time?",
+      "reference": "Você se importaria de explicar isso mais uma vez?"
+    }
+  ]
+}
