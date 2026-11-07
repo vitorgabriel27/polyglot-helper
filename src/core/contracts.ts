@@ -3,9 +3,18 @@ import type { TranslationStatus } from './translation';
 import type { SpeechStatus } from './speech';
 import type { AudioMetrics, AudioSource } from './audio';
 export type { Preferences, UserSettings } from './preferences';
-export type SessionState =
-  'idle' | 'starting' | 'listening' | 'paused' | 'reconnecting' | 'error' | 'stopping';
-export interface Segment {
+import type { SpeechBackend } from './speech';
+import type { TranslationBackend } from './translation';
+
+export interface AudioChunk {
+  pcm: Uint8Array;
+  sampleRate: 16000;
+  channels: 1;
+  startMs: number;
+  endMs: number;
+}
+
+export interface TranscriptSegment {
   generation: number;
   segmentId: string;
   sequence: number;
@@ -17,6 +26,24 @@ export interface Segment {
   pronunciation: string;
   isFinal: boolean;
 }
+
+export type SpeechProvider = SpeechBackend;
+export type TranslationProvider = TranslationBackend;
+
+export const DESKTOP_EVENTS = {
+  snapshot: 'helper:snapshot',
+  command: 'helper:command',
+  state: 'helper:state',
+} as const;
+
+export interface DesktopEventMap {
+  [DESKTOP_EVENTS.state]: Snapshot;
+}
+export type DesktopEventName = keyof DesktopEventMap;
+
+export type SessionState =
+  'idle' | 'starting' | 'listening' | 'paused' | 'reconnecting' | 'error' | 'stopping';
+export type Segment = TranscriptSegment;
 export interface Snapshot {
   state: SessionState;
   generation: number;

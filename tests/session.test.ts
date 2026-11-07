@@ -47,8 +47,24 @@ describe('simulation lifecycle', () => {
     session.stop();
     expect(session.ready(generation)).toBe(false);
     expect(session.accept(segment(generation))).toBe(false);
+    expect(session.state).toBe('stopping');
+    session.finishStop();
     expect(session.state).toBe('idle');
     expect(session.segment).toBeNull();
+  });
+  it('tracks reconnect and stop transitions while invalidating stale generations', () => {
+    const session = new Session();
+    const generation = session.start();
+    session.ready(generation);
+    expect(session.reconnect(generation)).toBe(true);
+    expect(session.state).toBe('reconnecting');
+    expect(session.reconnected(generation)).toBe(true);
+    expect(session.state).toBe('listening');
+    session.stop();
+    expect(session.state).toBe('stopping');
+    expect(session.ready(generation)).toBe(false);
+    expect(session.finishStop()).toBe(true);
+    expect(session.state).toBe('idle');
   });
 });
 describe('IPC command boundary', () => {

@@ -19,6 +19,16 @@ export class Session {
     this.state = 'listening';
     return true;
   }
+  reconnect(generation: number) {
+    if (this.generation !== generation || this.state !== 'listening') return false;
+    this.state = 'reconnecting';
+    return true;
+  }
+  reconnected(generation: number) {
+    if (this.generation !== generation || this.state !== 'reconnecting') return false;
+    this.state = 'listening';
+    return true;
+  }
   accept(segment: Segment) {
     if (this.state !== 'listening' || segment.generation !== this.generation) return false;
     if (this.segment && segment.sequence < this.segment.sequence) return false;
@@ -77,6 +87,10 @@ export class Session {
     this.generation += 1;
     this.segment = null;
     this.recentSegments = [];
+  }
+  finishStop() {
+    if (this.state !== 'stopping') return false;
     this.state = 'idle';
+    return true;
   }
 }

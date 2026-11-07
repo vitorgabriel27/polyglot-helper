@@ -1,13 +1,10 @@
 import { access } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
-import type {
-  TranslationBackend,
-  TranslationHandle,
-  TranslationResult,
-} from '../../core/translation';
+import type { TranslationHandle, TranslationResult } from '../../core/translation';
+import type { TranslationProvider } from '../../core/contracts';
 
-export class LocalTranslation implements TranslationBackend {
+export class LocalTranslation implements TranslationProvider {
   constructor(private root: string) {}
   get python() {
     return path.join(

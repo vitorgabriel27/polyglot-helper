@@ -1,3 +1,5 @@
+import type { AudioChunk } from './contracts';
+
 export interface SpeechResult {
   text: string;
   decodeMs: number;
@@ -17,12 +19,9 @@ export interface SpeechStatus {
   decodeMs: number | null;
   dropped: number;
 }
-export interface Utterance {
+export interface Utterance extends AudioChunk {
   sequence: number;
   revision: number;
-  startMs: number;
-  endMs: number;
-  pcm: Uint8Array;
   isFinal: boolean;
 }
 
@@ -73,6 +72,8 @@ export class UtteranceSegmenter {
       this.emit({
         sequence: this.sequence,
         revision: ++this.revision,
+        sampleRate: 16000,
+        channels: 1,
         startMs: this.startMs,
         endMs: this.clockMs,
         pcm: Buffer.concat(this.frames),

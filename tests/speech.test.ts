@@ -14,6 +14,8 @@ const voiced = (ms: number) => {
 const task = (sequence: number): Utterance => ({
   sequence,
   revision: 1,
+  sampleRate: 16000,
+  channels: 1,
   startMs: 0,
   endMs: 2000,
   pcm: voiced(20),

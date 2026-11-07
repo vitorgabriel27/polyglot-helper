@@ -27,7 +27,13 @@ import { LocalTranslation } from '../adapters/translation/local';
 import { Session } from '../core/session';
 import { CaptureManager, emptyMetrics, type AudioSource } from '../core/audio';
 import { defaults } from '../core/preferences';
-import { isCommand, type Segment, type Snapshot, type UserSettings } from '../core/contracts';
+import {
+  DESKTOP_EVENTS,
+  isCommand,
+  type Segment,
+  type Snapshot,
+  type UserSettings,
+} from '../core/contracts';
 import { startDemo } from '../adapters/demo';
 import { platformAudio } from '../adapters/audio/platform';
 import { SettingsStore } from './settings-store';
@@ -147,7 +153,7 @@ function publish() {
   position();
   for (const window of [notch, settingsWindow])
     if (window && !window.isDestroyed() && !window.webContents.isDestroyed())
-      window.webContents.send('helper:state', snapshot());
+      window.webContents.send(DESKTOP_EVENTS.state, snapshot());
 }
 function run(operation: Promise<void>) {
   void operation.catch((cause) => {
@@ -284,6 +290,8 @@ async function endCapture(pause = false) {
   publish();
   try {
     await Promise.all([capture.stop(), stopSpeech(), stopTranslation()]);
+    if (!pause) controller.finishStop();
+    publish();
   } catch {
     error = 'A captura não encerrou corretamente. Feche o aplicativo antes de retomar.';
     controller.fail(controller.generation);
@@ -532,11 +540,11 @@ if (hasLock)
       notch.webContents.on('render-process-gone', () => {
         void endCapture().finally(() => app.quit());
       });
-      ipcMain.handle('helper:snapshot', (event) => {
+      ipcMain.handle(DESKTOP_EVENTS.snapshot, (event) => {
         if (!authorized(event)) throw new Error('Origem inválida');
         return snapshot();
       });
-      ipcMain.handle('helper:command', async (event, command: unknown) => {
+      ipcMain.handle(DESKTOP_EVENTS.command, async (event, command: unknown) => {
         if (!authorized(event) || !isCommand(command)) throw new Error('Comando inválido');
         if (command.type === 'fit-notch' && event.sender !== notch.webContents)
           throw new Error('Origem inválida para resize');

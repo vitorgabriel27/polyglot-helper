@@ -1,9 +1,10 @@
 import { access } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
-import type { SpeechBackend, SpeechHandle, SpeechResult } from '../../core/speech';
+import type { SpeechProvider } from '../../core/contracts';
+import type { SpeechHandle, SpeechResult } from '../../core/speech';
 
-export class LocalSpeech implements SpeechBackend {
+export class LocalSpeech implements SpeechProvider {
   constructor(private root: string) {}
   get python() {
     return path.join(

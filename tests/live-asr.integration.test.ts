@@ -103,10 +103,12 @@ it.skipIf(process.platform !== 'linux' || process.env.HELPER_ASR_TEST !== '1')(
         )
         .toMatch(/americans|country/);
       await expect.poll(() => finals, { timeout: 20000 }).toBeGreaterThan(0);
+      const activeSpeech = speech;
+      if (!activeSpeech) throw new Error('ASR não foi inicializado.');
       pipeline.stop();
       await capture.stop();
       abort.abort();
-      await speech.stop();
+      await activeSpeech.stop();
       speech = undefined;
       expect(failure).toBeUndefined();
       console.log(
