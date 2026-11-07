@@ -1,3 +1,6 @@
+import { createLoginStartup } from './login-startup';
+import { positionWindows } from './window-position';
+import { harden } from './window-security';
 import {
   app,
   BrowserWindow,
@@ -85,6 +88,7 @@ if (process.platform === 'linux') {
   if (!process.argv.includes('--enable-gpu')) launchArgs.push('--disable-gpu');
 }
 const linuxAutostart = new LinuxAutostart(configDirectory, process.execPath, launchArgs);
+const { loginEnabled, setLogin } = createLoginStartup(linuxAutostart, launchArgs, isTest);
 let userSettings = defaults();
 let notch: BrowserWindow;
 let settingsWindow: BrowserWindow;
@@ -132,35 +136,10 @@ function snapshot(): Snapshot {
   };
 }
 function position(recenter = false) {
-  if (quitting || !notch || notch.isDestroyed()) return;
-  const old = notch.getBounds();
-  const area = (recenter ? screen.getPrimaryDisplay() : screen.getDisplayMatching(old)).workArea;
-  const expanded = ['listening', 'starting', 'error'].includes(controller.state);
-  const width = Math.min(expanded ? 560 : 300, area.width);
-  const center = recenter ? area.x + area.width / 2 : old.x + old.width / 2;
-  const x = Math.max(area.x, Math.min(Math.round(center - width / 2), area.x + area.width - width));
-  const y = recenter
-    ? area.y + 10
-    : Math.max(area.y, Math.min(old.y, area.y + area.height - notchHeight));
-  if (old.width !== width || old.height !== notchHeight || recenter)
-    notch.setBounds({ width, height: notchHeight, x, y });
-  const panelWidth = Math.min(400, area.width);
-  const panelHeight = Math.min(620, area.height - 16);
-  const panel = {
-    width: panelWidth,
-    height: panelHeight,
-    x: Math.max(
-      area.x,
-      Math.min(x + Math.round((width - panelWidth) / 2), area.x + area.width - panelWidth),
-    ),
-    y: Math.max(area.y, Math.min(y + notchHeight + 8, area.y + area.height - panelHeight)),
-  };
-  if (!settingsWindow || settingsWindow.isDestroyed()) return;
-  const previousPanel = settingsWindow.getBounds();
-  if (
-    Object.entries(panel).some(([key, value]) => previousPanel[key as keyof typeof panel] !== value)
-  )
-    settingsWindow.setBounds(panel);
+  positionWindows(
+    { notch, settingsWindow, quitting, notchHeight, state: controller.state },
+    recenter,
+  );
 }
 function publish() {
   if (quitting || !notch || notch.isDestroyed()) return;
@@ -412,26 +391,6 @@ async function toggle() {
   }
 }
 
-async function loginEnabled() {
-  if (process.platform === 'linux') return linuxAutostart.enabled();
-  if (process.platform === 'win32' && !isTest)
-    return app.getLoginItemSettings({ path: process.execPath, args: launchArgs }).openAtLogin;
-  return false;
-}
-async function setLogin(enabled: boolean) {
-  if (process.platform === 'linux') await linuxAutostart.set(enabled);
-  else if (process.platform === 'win32' && !isTest) {
-    app.setLoginItemSettings({
-      openAtLogin: enabled,
-      enabled,
-      name: 'PolyglotHelper',
-      path: process.execPath,
-      args: launchArgs,
-    });
-    if ((await loginEnabled()) !== enabled)
-      throw new Error('O Windows não confirmou a configuração de inicialização.');
-  } else if (enabled) throw new Error('Inicialização automática indisponível neste ambiente.');
-}
 async function applySettings(next: UserSettings) {
   const previous = userSettings;
   if (next.sourceId && next.sourceId !== previous.sourceId) {
@@ -470,11 +429,6 @@ async function configure(next: UserSettings) {
   } finally {
     configuring = false;
   }
-}
-function harden(window: BrowserWindow) {
-  window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
-  window.webContents.on('will-navigate', (event) => event.preventDefault());
-  window.webContents.on('will-attach-webview', (event) => event.preventDefault());
 }
 function authorized(event: Electron.IpcMainInvokeEvent) {
   return (
