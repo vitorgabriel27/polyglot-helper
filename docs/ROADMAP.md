@@ -90,16 +90,16 @@ Decisão e limites: [OVERLAY-PREFERENCIAS.md](decisions/OVERLAY-PREFERENCIAS.md)
 ## M2 — Construir a fundação compartilhada · P0
 
 - [x] **BASE-01** Criar projeto pnpm com Electron, React, Vite e TypeScript; fixar versões estáveis na implementação e gerar lockfile.
-- [ ] **BASE-02** Separar módulos: desktop/main, preload, renderer, core/session, adapters/audio, adapters/speech e adapters/translation; evitar duplicar UI por SO.
-- [ ] **BASE-03** Definir contratos AudioSource, AudioChunk, TranscriptSegment, SpeechProvider, TranslationProvider e eventos tipados, incluindo sessão, geração, revisão e timestamps.
-- [ ] **BASE-04** Implementar máquina de estados: idle, starting, listening, paused, reconnecting, error e stopping; estado do popover independente da captura.
+- [x] **BASE-02** Separar módulos: desktop/main, preload, renderer, core/session, adapters/audio, adapters/speech e adapters/translation; evitar duplicar UI por SO.
+- [x] **BASE-03** Definir contratos AudioSource, AudioChunk, TranscriptSegment, SpeechProvider, TranslationProvider e eventos tipados, incluindo sessão, geração, revisão e timestamps.
+- [x] **BASE-04** Implementar máquina de estados: idle, starting, listening, paused, reconnecting, error e stopping; estado do popover independente da captura.
 - [x] **BASE-05** Configurar preload restrito, sandbox, contextIsolation, validação de IPC e CSP. Renderizar transcrição como texto.
 - [ ] **BASE-06** Persistir preferências em JSON versionado com gravação atômica e recuperação de arquivo inválido. Armazenamento seguro de credenciais por SO; sem fallback em texto puro.
-- [ ] **BASE-07** Automatizar tipagem, lint, build e testes de contratos em Windows/Linux. Se CI não estiver disponível, documentar comandos e execução local nos dois.
+- [x] **BASE-07** Automatizar tipagem, lint, build e testes de contratos em Windows/Linux. Se CI não estiver disponível, documentar comandos e execução local nos dois.
 
 **Concluído quando:** app abre nos dois sistemas, adaptadores simulados produzem eventos e a UI não tem acesso direto a segredos ou dispositivos.
 
-Evidências da base inicial: `package.json`, `pnpm-lock.yaml`, `src/desktop`, `tests` e [instruções de desenvolvimento](DESENVOLVIMENTO.md), com [relatório de validação](validation/BASE-DESKTOP.md). BASE-02/03/04 e BASE-07 parciais: adaptadores reais de áudio, fala e tradução, contratos com geração/revisão e controle de sessão presentes; falta consolidar recuperação/estados completos e validar Windows. Prettier, ESLint, tipagem, testes e build executam localmente via pnpm check; CI e execução nativa Windows pendentes. BASE-06 parcial: preferências versionadas/atômicas implementadas e testadas; armazenamento seguro de credenciais permanece pendente até integrar provedores.
+Evidência atualizada: [fundação M2](validation/M2-FUNDACOES.md), contratos em `src/core/contracts.ts`, ciclo em `src/core/session.ts`, adaptadores e workflow `.github/workflows/check.yml`. M2 está concluído no código compartilhado e na automação. O aceite de abertura/execução nativa Windows ainda depende do M1/DEC-06. BASE-06 permanece parcial: preferências versionadas com escrita atômica e recuperação implementadas; armazenamento seguro de credenciais fica pendente até selecionar um provedor que precise delas. Não há credenciais nem chamadas remotas no app atual.
 
 ## MR — Aplicar pesquisa ao harness · P0
 
