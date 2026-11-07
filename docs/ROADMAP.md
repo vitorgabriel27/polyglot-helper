@@ -1,6 +1,21 @@
 # PolyglotHelper — metas e tarefas de execução
 
-Atualizado em 07/11/2026. Status: M0 parcial; notch validada pelo usuário, configuração inicial/persistência e captura local Linux implementadas. Windows preparado para validação futura pelo usuário.
+Atualizado em 07/11/2026. Status: piloto local Linux em evolução, com notch aceita pelo usuário, onboarding persistente, captura PipeWire, transcrição Whisper e tradução inglês → pt-BR implementados. M0, Windows, harness e aceite dos marcos seguem parciais.
+
+## Estado atual e próxima sequência
+
+- **Implementado no Linux:** notch e configuração rápida, preferências persistentes, captura local, ASR Whisper base.en e tradução OPUS/Argos em worker separado. O original aparece imediatamente e a tradução abaixo; desligar tradução preserva o ASR.
+- **Verificado:** check local com Node 23.11.1 (tipagem, lint, 22 testes unitários e build), 6 testes desktop e inspeção visual de legenda real traduzida. Prettier integrado ao fluxo. Evidências em [TRADUCAO-LOCAL.md](validation/TRADUCAO-LOCAL.md).
+- **Corrigido:** acesso a janelas destruídas ao reabrir configurações/iniciar outra instância; regressões de ciclo de vida cobertas nos testes desktop.
+- **Pendente:** benchmark amplo, IPA real, captura e testes nativos Windows, harness com System 1/gate/cascata e instaladores. Nenhum marco multiplataforma está concluído.
+
+Ordem prática para continuar, mantendo os IDs abaixo:
+
+1. **TR-04 + STT-04:** preparar referências e medir qualidade/latência do baseline local; comparar custo e desempenho antes de decidir a escalada remota (DEC-03). Duas frases traduzidas não substituem benchmark.
+2. **STT-05 + LIN-01/02 + UX-04:** validar sessões prolongadas, ciclos de captura, dispositivos físicos, troca entre aplicativos, fullscreen e monitores no Linux.
+3. **MR-01/02/04/07/08:** definir contratos do harness e implementar gate, cascata limitada, replay e trilha sanitizada com nuvem simulada. O baseline atual ainda não integra o harness.
+4. **DEC-01/06 + WIN-01/02/03:** identificar Windows no próximo boot, clonar o repositório e implementar/validar captura e integração nativas. Trabalho Linux pode avançar enquanto essa máquina não é testada.
+5. **PH-01/02/03 e M6:** integrar pronúncia com fonte licenciada, empacotar e executar o aceite completo nos dois sistemas, incluindo MR.
 
 ## Objetivo da entrega
 
@@ -18,7 +33,7 @@ O usuário incluiu harness de agentes, System 1 local, cascatas de modelos e esc
 - P0: necessário ao piloto; P1: etapa seguinte; P2: expansão.
 - Estimativas em dias de trabalho de uma pessoa, incluindo integração e verificação; não representam datas prometidas. Cada marco depende do anterior, salvo tarefas explicitamente independentes.
 - Responsável técnico inicial: implementação assistida pelo Codex. Decisões de produto, orçamento, credenciais e teste com usuários: responsável pelo projeto.
-- Proposta de stack: Electron/TypeScript, React/Vite/CSS, Zustand, adaptadores de captura por SO, Deepgram e DeepL no caminho remoto. Serviços remotos continuam como proposta: sua ativação depende da escolha entre remoto e local.
+- Stack implementada: Electron/TypeScript, React/Vite/CSS, Zustand, PipeWire no Linux e workers Python com faster-whisper e CTranslate2/SentencePiece (OPUS/Argos). Adaptadores Windows e serviços remotos seguem pendentes. Deepgram/DeepL são candidatos, sem seleção ou ativação operacional.
 - Não comprar serviços, ativar captura nem enviar áudio como consequência deste planejamento.
 
 ## Visão dos marcos
@@ -84,7 +99,7 @@ Decisão e limites: [OVERLAY-PREFERENCIAS.md](decisions/OVERLAY-PREFERENCIAS.md)
 
 **Concluído quando:** app abre nos dois sistemas, adaptadores simulados produzem eventos e a UI não tem acesso direto a segredos ou dispositivos.
 
-Evidências da base inicial: `package.json`, `pnpm-lock.yaml`, `src/desktop`, `tests` e [instruções de desenvolvimento](DESENVOLVIMENTO.md), com [relatório de validação](validation/BASE-DESKTOP.md). BASE-02/03/04 e BASE-07 parciais: estrutura e controle de simulação presentes, contratos dos provedores/recuperação de erros e execução Windows ainda pendentes. BASE-06 parcial: preferências versionadas/atômicas implementadas e testadas; armazenamento seguro de credenciais permanece pendente até integrar provedores.
+Evidências da base inicial: `package.json`, `pnpm-lock.yaml`, `src/desktop`, `tests` e [instruções de desenvolvimento](DESENVOLVIMENTO.md), com [relatório de validação](validation/BASE-DESKTOP.md). BASE-02/03/04 e BASE-07 parciais: adaptadores reais de áudio, fala e tradução, contratos com geração/revisão e controle de sessão presentes; falta consolidar recuperação/estados completos e validar Windows. Prettier, ESLint, tipagem, testes e build executam localmente via pnpm check; CI e execução nativa Windows pendentes. BASE-06 parcial: preferências versionadas/atômicas implementadas e testadas; armazenamento seguro de credenciais permanece pendente até integrar provedores.
 
 ## MR — Aplicar pesquisa ao harness · P0
 
@@ -169,13 +184,21 @@ Tradução local inicial implementada e validada na notch: original imediato, po
 - [ ] **NEXT-05 · P1** Assinatura de código, atualização e política de suporte por versão.
 - [ ] **NEXT-06 · P2** TTS/repetição lenta, mais idiomas, captura por aplicativo quando suportada e sincronização opcional.
 
+- [ ] **NEXT-07 · P1** Histórico de traduções navegável para trás e para frente. Definir retenção, limite e limpeza; distinguir histórico da legenda ao vivo. Persistência de transcrições deve ser uma escolha explícita do usuário.
+- [ ] **NEXT-08 · P1** Adicionar italiano, francês e alemão para testes. Definir direção dos pares, selecionar modelos/licenças, atualizar configurações e medir ASR/tradução por idioma com referências.
+- [ ] **NEXT-09 · P2** Modelar modo tutor: usuário fala e o app responde e corrige pronúncia, gramática e concordância. Definir turnos, critérios de avaliação, feedback e integração com o harness antes de implementar.
+
+As três propostas acima foram incorporadas do arquivo temporário `new_features`, removido após a consolidação. Permanecem fora do aceite do piloto mínimo.
+
 ## Registro de progresso
 
 | Data       | Marco/tarefa                         | Evidência                                                | Resultado / próximo passo                                                                                                                                                |
 | ---------- | ------------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 07/11/2026 | Ferramentas e estabilidade           | Prettier/ESLint; tests/desktop/notch.spec.ts             | Formatação integrada e regressões de reabertura/segunda instância cobertas                                                                                               |
+| 07/11/2026 | Backlog de produto                   | NEXT-07/08/09                                            | Histórico, três idiomas e modelagem do tutor incorporados; implementação pendente                                                                                        |
 | 07/11/2026 | Planejamento                         | Este arquivo e ARQUITETURA.md                            | Plano salvo; Windows e Linux incluídos                                                                                                                                   |
 | 07/11/2026 | Tradução local inicial               | core/translation; workers/translation; TRADUCAO-LOCAL.md | Inglês → pt-BR abaixo da transcrição; opção salva e cancelamento; 22 unitários e 6 desktop passaram com Node 23                                                          |
-| 07/11/2026 | ASR local inicial                    | workers/asr; core/speech; testes de ASR                  | Whisper base.en/CPU preparado, worker offline e caminho PipeWire testados; Parakeet v3 candidato; Windows/tradução/harness pendentes                                     |
+| 07/11/2026 | ASR local inicial                    | workers/asr; core/speech; testes de ASR                  | Whisper base.en/CPU preparado, worker offline e caminho PipeWire testados; Parakeet v3 candidato; Windows e harness pendentes; tradução local adicionada posteriormente  |
 | 07/11/2026 | Captura e onboarding / UX-01 e UX-02 | src/adapters/audio; settings-store; testes               | Notch aceita pelo usuário; captura local Linux e preferências implementadas; autostart opt-in; Windows nativo pendente                                                   |
 | 07/11/2026 | Base desktop / BASE-01 e BASE-05     | src/desktop; tests; DESENVOLVIMENTO.md                   | Pasta oficial e main definidas; notch/demo e IPC restrito; checks locais; Windows nativo adiado por decisão do usuário                                                   |
 | 07/11/2026 | Pesquisa / novo MR                   | research/HARNESS-CASCATAS.md                             | Artigo lido; arquitetura adaptada; 15 tarefas de pesquisa adicionadas; implementação pendente; prazo global a reestimar                                                  |
