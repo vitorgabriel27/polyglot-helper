@@ -24,12 +24,12 @@ Não se afirma que o runtime completo cabe em 6 GiB apenas pelo tamanho dos peso
 
 ## Comparação a executar
 
-| Opção | Papel proposto | Estado |
-| --- | --- | --- |
-| Whisper base.en / CPU int8 | Baseline de integração; candidato a fallback para inglês | Implementado/testado em pequena fixture pública |
-| Parakeet TDT 0.6B v3 | Candidato multilíngue principal local; GPU ou runtime otimizado a medir | Sem benchmark no equipamento |
-| ASR preparado para streaming | Comparador de latência/interatividade | Variante/runtime pendentes |
-| API remota | Último estágio opcional de cascata | Sem autorização operacional/credenciais; desconectada |
+| Opção                        | Papel proposto                                                          | Estado                                                |
+| ---------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------- |
+| Whisper base.en / CPU int8   | Baseline de integração; candidato a fallback para inglês                | Implementado/testado em pequena fixture pública       |
+| Parakeet TDT 0.6B v3         | Candidato multilíngue principal local; GPU ou runtime otimizado a medir | Sem benchmark no equipamento                          |
+| ASR preparado para streaming | Comparador de latência/interatividade                                   | Variante/runtime pendentes                            |
+| API remota                   | Último estágio opcional de cascata                                      | Sem autorização operacional/credenciais; desconectada |
 
 Usar os mesmos áudios/segmentos e medir WER por idioma/sotaque, ruído, revisão de legenda, p50/p95 ponta a ponta, VRAM/RAM/CPU, tempo de carregamento, instalação e consumo de energia quando mensurável. Não comparar apenas velocidade de processamento de arquivo com atraso percebido ao vivo. Adicionar trechos pt-BR, inglês e espanhol antes de escolher motor principal.
 

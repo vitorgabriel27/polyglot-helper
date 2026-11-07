@@ -19,7 +19,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:desktop": "pnpm build && playwright test",
-    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",
+    "check": "pnpm format:check && pnpm typecheck && pnpm lint && pnpm test && pnpm build",
     "setup:asr": "node scripts/setup-asr.mjs",
     "test:asr": "node scripts/test-asr.mjs",
     "lint:fix": "eslint . --fix",

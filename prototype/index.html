@@ -1,46 +1,391 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PolyglotHelper — protótipo</title><style>body{margin:24px;background:#18231f} @media(max-width:650px){body{margin:8px}}</style></head><body><div id="polyglot">
-  <style>
-    #polyglot{color-scheme:light dark;--paper:light-dark(#f4f5f1,#141b1b);--panel:light-dark(#fff,#202b2a);--ink:light-dark(#19382f,#e7f1eb);--muted:light-dark(#56665e,#a8bab0);--line:light-dark(#d4dfd7,#42554c);--accent:light-dark(#176747,#85d8ad);font:15px/1.55 system-ui,sans-serif;color:var(--ink)}
-    #polyglot *{box-sizing:border-box}#polyglot button,#polyglot select{font:inherit;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 12px;cursor:pointer}#polyglot button:focus-visible,#polyglot select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}#polyglot .shell{background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden}#polyglot header{padding:20px 24px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line)}#polyglot .brand{font-size:22px;font-weight:650;margin-right:auto}#polyglot small,#polyglot .muted{color:var(--muted)}#polyglot .layout{display:grid;grid-template-columns:210px 1fr}#polyglot aside{padding:24px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:16px}#polyglot label{display:flex;flex-direction:column;gap:6px}#polyglot .check{flex-direction:row;align-items:center}#polyglot main{padding:26px;min-width:0}#polyglot .screen{min-height:340px;display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:14px}#polyglot .scene{padding:20px 0}#polyglot h2{font-size:26px;font-weight:500;margin:10px 0}#polyglot p{margin:8px 0}#polyglot .overlay{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 10px 24px #00000012}#polyglot .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}#polyglot .status{margin-right:auto;color:var(--accent)}#polyglot .original{font-size:23px;margin:16px 0 6px;display:flex;flex-wrap:wrap;gap:4px}#polyglot .original button{padding:0 3px;border-color:transparent;background:transparent;font-size:inherit}#polyglot .original button:hover{background:var(--panel);border-color:var(--line)}#polyglot .phonetic{color:var(--accent)}#polyglot footer{padding-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}#polyglot .detail{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}#polyglot .saved{margin-top:18px;color:var(--muted)}#polyglot [hidden]{display:none!important}@media(max-width:650px){#polyglot .layout{grid-template-columns:1fr}#polyglot aside{border-right:0;border-bottom:1px solid var(--line);flex-direction:row;flex-wrap:wrap;padding:16px}#polyglot main{padding:14px}#polyglot .screen{padding:14px}#polyglot header{padding:16px}}
-  </style>
-  <div class="shell">
-    <header><span class="brand">PolyglotHelper <small> / seu idioma, por perto</small></span><small>Protótipo · conteúdo simulado</small></header>
-    <div class="layout">
-      <aside>
-        <label>Conteúdo<select id="pg-source"><option value="video">Vídeo</option><option value="text">Texto na tela</option><option value="audio">Áudio</option></select></label>
-        <label>Aprender<select id="pg-language"><option value="en">Inglês</option><option value="es">Espanhol</option></select></label>
-        <small>Tradução para português</small>
-        <label>Pronúncia<select id="pg-phonetics"><option value="approx">Aproximada (PT-BR)</option><option value="ipa">IPA</option><option value="off">Ocultar</option></select></label>
-        <label class="check"><input id="pg-translation" type="checkbox" checked> Mostrar tradução</label>
-        <small>A pronúncia aproximada é um apoio; não representa todos os sons do idioma.</small>
-      </aside>
-      <main>
-        <div class="screen">
-          <div class="scene"><small id="pg-context">VÍDEO / Conversas do dia a dia</small><h2 id="pg-title">Um pequeno passo, todos os dias.</h2><p class="muted" id="pg-background">Acompanhe o conteúdo com uma legenda que ajuda você a aprender.</p></div>
-          <section class="overlay" aria-label="Assistente de idiomas">
-            <div class="toolbar"><span class="status" id="pg-status">● Acompanhando demonstração</span><button id="pg-pause" type="button">Pausar</button></div>
-            <div id="pg-result" aria-live="polite"><div class="original" id="pg-original"></div><p id="pg-translated"></p><p class="phonetic" id="pg-pronunciation"></p></div>
-            <div class="detail" id="pg-detail" hidden><div id="pg-definition"></div><button type="button" id="pg-save">Salvar palavra</button></div>
-          </section>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PolyglotHelper — protótipo</title>
+    <style>
+      body {
+        margin: 24px;
+        background: #18231f;
+      }
+      @media (max-width: 650px) {
+        body {
+          margin: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="polyglot">
+      <style>
+        #polyglot {
+          color-scheme: light dark;
+          --paper: light-dark(#f4f5f1, #141b1b);
+          --panel: light-dark(#fff, #202b2a);
+          --ink: light-dark(#19382f, #e7f1eb);
+          --muted: light-dark(#56665e, #a8bab0);
+          --line: light-dark(#d4dfd7, #42554c);
+          --accent: light-dark(#176747, #85d8ad);
+          font:
+            15px/1.55 system-ui,
+            sans-serif;
+          color: var(--ink);
+        }
+        #polyglot * {
+          box-sizing: border-box;
+        }
+        #polyglot button,
+        #polyglot select {
+          font: inherit;
+          color: inherit;
+          background: var(--panel);
+          border: 1px solid var(--line);
+          border-radius: 9px;
+          padding: 8px 12px;
+          cursor: pointer;
+        }
+        #polyglot button:focus-visible,
+        #polyglot select:focus-visible {
+          outline: 3px solid var(--accent);
+          outline-offset: 3px;
+        }
+        #polyglot .shell {
+          background: var(--paper);
+          border: 1px solid var(--line);
+          border-radius: 18px;
+          overflow: hidden;
+        }
+        #polyglot header {
+          padding: 20px 24px;
+          display: flex;
+          gap: 14px;
+          align-items: center;
+          flex-wrap: wrap;
+          border-bottom: 1px solid var(--line);
+        }
+        #polyglot .brand {
+          font-size: 22px;
+          font-weight: 650;
+          margin-right: auto;
+        }
+        #polyglot small,
+        #polyglot .muted {
+          color: var(--muted);
+        }
+        #polyglot .layout {
+          display: grid;
+          grid-template-columns: 210px 1fr;
+        }
+        #polyglot aside {
+          padding: 24px;
+          border-right: 1px solid var(--line);
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        #polyglot label {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        #polyglot .check {
+          flex-direction: row;
+          align-items: center;
+        }
+        #polyglot main {
+          padding: 26px;
+          min-width: 0;
+        }
+        #polyglot .screen {
+          min-height: 340px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          gap: 32px;
+          padding: 24px;
+          background: var(--panel);
+          border: 1px solid var(--line);
+          border-radius: 14px;
+        }
+        #polyglot .scene {
+          padding: 20px 0;
+        }
+        #polyglot h2 {
+          font-size: 26px;
+          font-weight: 500;
+          margin: 10px 0;
+        }
+        #polyglot p {
+          margin: 8px 0;
+        }
+        #polyglot .overlay {
+          background: var(--paper);
+          border: 1px solid var(--line);
+          border-radius: 14px;
+          padding: 20px;
+          box-shadow: 0 10px 24px #00000012;
+        }
+        #polyglot .toolbar {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        #polyglot .status {
+          margin-right: auto;
+          color: var(--accent);
+        }
+        #polyglot .original {
+          font-size: 23px;
+          margin: 16px 0 6px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 4px;
+        }
+        #polyglot .original button {
+          padding: 0 3px;
+          border-color: transparent;
+          background: transparent;
+          font-size: inherit;
+        }
+        #polyglot .original button:hover {
+          background: var(--panel);
+          border-color: var(--line);
+        }
+        #polyglot .phonetic {
+          color: var(--accent);
+        }
+        #polyglot footer {
+          padding-top: 18px;
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+        #polyglot .detail {
+          margin-top: 20px;
+          border-top: 1px solid var(--line);
+          padding-top: 16px;
+        }
+        #polyglot .saved {
+          margin-top: 18px;
+          color: var(--muted);
+        }
+        #polyglot [hidden] {
+          display: none !important;
+        }
+        @media (max-width: 650px) {
+          #polyglot .layout {
+            grid-template-columns: 1fr;
+          }
+          #polyglot aside {
+            border-right: 0;
+            border-bottom: 1px solid var(--line);
+            flex-direction: row;
+            flex-wrap: wrap;
+            padding: 16px;
+          }
+          #polyglot main {
+            padding: 14px;
+          }
+          #polyglot .screen {
+            padding: 14px;
+          }
+          #polyglot header {
+            padding: 16px;
+          }
+        }
+      </style>
+      <div class="shell">
+        <header>
+          <span class="brand">PolyglotHelper <small> / seu idioma, por perto</small></span
+          ><small>Protótipo · conteúdo simulado</small>
+        </header>
+        <div class="layout">
+          <aside>
+            <label
+              >Conteúdo<select id="pg-source">
+                <option value="video">Vídeo</option>
+                <option value="text">Texto na tela</option>
+                <option value="audio">Áudio</option>
+              </select></label
+            >
+            <label
+              >Aprender<select id="pg-language">
+                <option value="en">Inglês</option>
+                <option value="es">Espanhol</option>
+              </select></label
+            >
+            <small>Tradução para português</small>
+            <label
+              >Pronúncia<select id="pg-phonetics">
+                <option value="approx">Aproximada (PT-BR)</option>
+                <option value="ipa">IPA</option>
+                <option value="off">Ocultar</option>
+              </select></label
+            >
+            <label class="check"
+              ><input id="pg-translation" type="checkbox" checked /> Mostrar tradução</label
+            >
+            <small
+              >A pronúncia aproximada é um apoio; não representa todos os sons do idioma.</small
+            >
+          </aside>
+          <main>
+            <div class="screen">
+              <div class="scene">
+                <small id="pg-context">VÍDEO / Conversas do dia a dia</small>
+                <h2 id="pg-title">Um pequeno passo, todos os dias.</h2>
+                <p class="muted" id="pg-background">
+                  Acompanhe o conteúdo com uma legenda que ajuda você a aprender.
+                </p>
+              </div>
+              <section class="overlay" aria-label="Assistente de idiomas">
+                <div class="toolbar">
+                  <span class="status" id="pg-status">● Acompanhando demonstração</span
+                  ><button id="pg-pause" type="button">Pausar</button>
+                </div>
+                <div id="pg-result" aria-live="polite">
+                  <div class="original" id="pg-original"></div>
+                  <p id="pg-translated"></p>
+                  <p class="phonetic" id="pg-pronunciation"></p>
+                </div>
+                <div class="detail" id="pg-detail" hidden>
+                  <div id="pg-definition"></div>
+                  <button type="button" id="pg-save">Salvar palavra</button>
+                </div>
+              </section>
+            </div>
+            <footer>
+              <button id="pg-next" type="button">Próxima frase →</button
+              ><span class="muted">Selecione uma palavra para estudar.</span>
+            </footer>
+            <p class="saved" id="pg-saved" aria-live="polite">Seu vocabulário aparecerá aqui.</p>
+          </main>
         </div>
-        <footer><button id="pg-next" type="button">Próxima frase →</button><span class="muted">Selecione uma palavra para estudar.</span></footer>
-        <p class="saved" id="pg-saved" aria-live="polite">Seu vocabulário aparecerá aqui.</p>
-      </main>
+      </div>
+      <script>
+        (() => {
+          const root = document.getElementById('polyglot'),
+            el = (id) => root.querySelector('#pg-' + id);
+          const examples = {
+            en: [
+              {
+                words: ['Take', 'your', 'time.'],
+                meanings: ['levar / tomar (aqui: ir com calma)', 'seu / sua', 'tempo'],
+                translation: 'Vá com calma.',
+                approx: 'têik iór táim',
+                ipa: '/teɪk jər taɪm/',
+              },
+              {
+                words: ['Keep', 'learning', 'every', 'day.'],
+                meanings: ['continue', 'aprendendo', 'cada / todo', 'dia'],
+                translation: 'Continue aprendendo todos os dias.',
+                approx: 'kíp lâr-ning év-ri dêi',
+                ipa: '/kiːp ˈlɝːnɪŋ ˈɛvri deɪ/',
+              },
+            ],
+            es: [
+              {
+                words: ['Poco', 'a', 'poco.'],
+                meanings: ['pouco', 'a', 'pouco'],
+                translation: 'Pouco a pouco.',
+                approx: 'pô-ko a pô-ko',
+                ipa: '/ˈpoko a ˈpoko/',
+              },
+              {
+                words: ['Sigue', 'aprendiendo', 'cada', 'día.'],
+                meanings: ['continue', 'aprendendo', 'cada / todo', 'dia'],
+                translation: 'Continue aprendendo todos os dias.',
+                approx: 'sí-gue a-pren-diên-do ká-da dí-a',
+                ipa: '/ˈsiɣe apɾenˈdjendo ˈkada ˈdia/',
+              },
+            ],
+          };
+          let index = 0,
+            paused = false,
+            selected = null;
+          const saved = new Map();
+          const current = () => examples[el('language').value][index];
+          function render() {
+            const item = current();
+            el('original').replaceChildren(
+              ...item.words.map((word, i) => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.textContent = word;
+                b.setAttribute('aria-label', 'Estudar ' + word);
+                b.onclick = () => {
+                  selected = i;
+                  el('detail').hidden = false;
+                  el('definition').textContent = word + ' — ' + item.meanings[i];
+                  updateSave();
+                };
+                return b;
+              }),
+            );
+            el('translated').textContent = item.translation;
+            el('translated').hidden = !el('translation').checked;
+            el('pronunciation').textContent =
+              el('phonetics').value === 'ipa' ? item.ipa : item.approx;
+            el('pronunciation').hidden = el('phonetics').value === 'off';
+            el('detail').hidden = true;
+            selected = null;
+            const source = el('source').value;
+            el('context').textContent = {
+              video: 'VÍDEO / Conversas do dia a dia',
+              text: 'TEXTO / Leitura de um artigo',
+              audio: 'ÁUDIO / Conversa em um podcast',
+            }[source];
+            el('title').textContent = {
+              video: 'Um pequeno passo, todos os dias.',
+              text: 'Uma leitura que vira aprendizado.',
+              audio: 'Escute. Entenda. Aprenda.',
+            }[source];
+            el('status').textContent = paused
+              ? 'Ⅱ Demonstração pausada'
+              : '● Acompanhando demonstração';
+            el('pause').textContent = paused ? 'Retomar' : 'Pausar';
+            el('next').disabled = paused;
+          }
+          function key() {
+            return (
+              el('language').value +
+              ':' +
+              current().words[selected].toLowerCase().replace(/\.$/, '')
+            );
+          }
+          function updateSave() {
+            const exists = saved.has(key());
+            el('save').disabled = exists;
+            el('save').textContent = exists ? 'Palavra salva' : 'Salvar palavra';
+          }
+          el('save').onclick = () => {
+            if (selected === null) return;
+            saved.set(key(), current().words[selected].replace(/\.$/, ''));
+            el('saved').textContent =
+              'Vocabulário desta sessão: ' + [...saved.values()].join(' · ');
+            updateSave();
+          };
+          el('next').onclick = () => {
+            index = (index + 1) % 2;
+            render();
+          };
+          el('pause').onclick = () => {
+            paused = !paused;
+            render();
+          };
+          ['language', 'source', 'phonetics', 'translation'].forEach(
+            (name) =>
+              (el(name).onchange = () => {
+                index = 0;
+                render();
+              }),
+          );
+          render();
+        })();
+      </script>
     </div>
-  </div>
-  <script>
-  (()=>{
-    const root=document.getElementById('polyglot'),el=id=>root.querySelector('#pg-'+id);
-    const examples={en:[{words:['Take','your','time.'],meanings:['levar / tomar (aqui: ir com calma)','seu / sua','tempo'],translation:'Vá com calma.',approx:'têik iór táim',ipa:'/teɪk jər taɪm/'},{words:['Keep','learning','every','day.'],meanings:['continue','aprendendo','cada / todo','dia'],translation:'Continue aprendendo todos os dias.',approx:'kíp lâr-ning év-ri dêi',ipa:'/kiːp ˈlɝːnɪŋ ˈɛvri deɪ/'}],es:[{words:['Poco','a','poco.'],meanings:['pouco','a','pouco'],translation:'Pouco a pouco.',approx:'pô-ko a pô-ko',ipa:'/ˈpoko a ˈpoko/'},{words:['Sigue','aprendiendo','cada','día.'],meanings:['continue','aprendendo','cada / todo','dia'],translation:'Continue aprendendo todos os dias.',approx:'sí-gue a-pren-diên-do ká-da dí-a',ipa:'/ˈsiɣe apɾenˈdjendo ˈkada ˈdia/'}]};
-    let index=0,paused=false,selected=null;const saved=new Map();
-    const current=()=>examples[el('language').value][index];
-    function render(){const item=current();el('original').replaceChildren(...item.words.map((word,i)=>{const b=document.createElement('button');b.type='button';b.textContent=word;b.setAttribute('aria-label','Estudar '+word);b.onclick=()=>{selected=i;el('detail').hidden=false;el('definition').textContent=word+' — '+item.meanings[i];updateSave();};return b;}));el('translated').textContent=item.translation;el('translated').hidden=!el('translation').checked;el('pronunciation').textContent=el('phonetics').value==='ipa'?item.ipa:item.approx;el('pronunciation').hidden=el('phonetics').value==='off';el('detail').hidden=true;selected=null;const source=el('source').value;el('context').textContent={video:'VÍDEO / Conversas do dia a dia',text:'TEXTO / Leitura de um artigo',audio:'ÁUDIO / Conversa em um podcast'}[source];el('title').textContent={video:'Um pequeno passo, todos os dias.',text:'Uma leitura que vira aprendizado.',audio:'Escute. Entenda. Aprenda.'}[source];el('status').textContent=paused?'Ⅱ Demonstração pausada':'● Acompanhando demonstração';el('pause').textContent=paused?'Retomar':'Pausar';el('next').disabled=paused;}
-    function key(){return el('language').value+':'+current().words[selected].toLowerCase().replace(/\.$/,'');}
-    function updateSave(){const exists=saved.has(key());el('save').disabled=exists;el('save').textContent=exists?'Palavra salva':'Salvar palavra';}
-    el('save').onclick=()=>{if(selected===null)return;saved.set(key(),current().words[selected].replace(/\.$/,''));el('saved').textContent='Vocabulário desta sessão: '+[...saved.values()].join(' · ');updateSave();};
-    el('next').onclick=()=>{index=(index+1)%2;render();};el('pause').onclick=()=>{paused=!paused;render();};['language','source','phonetics','translation'].forEach(name=>el(name).onchange=()=>{index=0;render();});render();
-  })();
-  </script>
-</div>
-</body></html>
+  </body>
+</html>

@@ -2,7 +2,8 @@ import { isUserSettings, type Preferences, type UserSettings } from './preferenc
 import type { SpeechStatus } from './speech';
 import type { AudioMetrics, AudioSource } from './audio';
 export type { Preferences, UserSettings } from './preferences';
-export type SessionState = 'idle' | 'starting' | 'listening' | 'paused' | 'reconnecting' | 'error' | 'stopping';
+export type SessionState =
+  'idle' | 'starting' | 'listening' | 'paused' | 'reconnecting' | 'error' | 'stopping';
 export interface Segment {
   generation: number;
   segmentId: string;
@@ -51,11 +52,26 @@ export function isCommand(value: unknown): value is Command {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const command = value as Record<string, unknown>;
   if (command.type === 'fit-notch') {
-    return Object.keys(command).length === 2 && typeof command.height === 'number'
-      && Number.isInteger(command.height) && command.height >= 50 && command.height <= 300;
+    return (
+      Object.keys(command).length === 2 &&
+      typeof command.height === 'number' &&
+      Number.isInteger(command.height) &&
+      command.height >= 50 &&
+      command.height <= 300
+    );
   }
-  if (Object.keys(command).some(key => !['type', 'value'].includes(key))) return false;
+  if (Object.keys(command).some((key) => !['type', 'value'].includes(key))) return false;
   if (command.type === 'configure') return isUserSettings(command.value);
-  return Object.keys(command).length === 1 && typeof command.type === 'string'
-    && ['toggle-session', 'stop', 'open-settings', 'close-settings', 'refresh-sources', 'quit'].includes(command.type);
+  return (
+    Object.keys(command).length === 1 &&
+    typeof command.type === 'string' &&
+    [
+      'toggle-session',
+      'stop',
+      'open-settings',
+      'close-settings',
+      'refresh-sources',
+      'quit',
+    ].includes(command.type)
+  );
 }

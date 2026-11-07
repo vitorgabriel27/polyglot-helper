@@ -20,8 +20,11 @@ export class Session {
   accept(segment: Segment) {
     if (this.state !== 'listening' || segment.generation !== this.generation) return false;
     if (this.segment && segment.sequence < this.segment.sequence) return false;
-    if (this.segment?.segmentId === segment.segmentId &&
-      (segment.revision <= this.segment.revision || this.segment.isFinal)) return false;
+    if (
+      this.segment?.segmentId === segment.segmentId &&
+      (segment.revision <= this.segment.revision || this.segment.isFinal)
+    )
+      return false;
     this.segment = segment;
     return true;
   }

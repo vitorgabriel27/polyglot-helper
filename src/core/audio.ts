@@ -11,13 +11,27 @@ export interface AudioMetrics {
   rms: number;
   peak: number;
 }
-export interface CaptureHandle { stop(): Promise<void> }
+export interface CaptureHandle {
+  stop(): Promise<void>;
+}
 export interface AudioBackend {
   listSources(): Promise<AudioSource[]>;
-  start(sourceId: string, signal: AbortSignal, onMetrics: (metrics: AudioMetrics) => void,
-    onError: (message: string) => void, onPcm?: (pcm: Uint8Array) => void): Promise<CaptureHandle>;
+  start(
+    sourceId: string,
+    signal: AbortSignal,
+    onMetrics: (metrics: AudioMetrics) => void,
+    onError: (message: string) => void,
+    onPcm?: (pcm: Uint8Array) => void,
+  ): Promise<CaptureHandle>;
 }
-export const emptyMetrics = (): AudioMetrics => ({ sampleRate: 16000, channels: 1, samples: 0, durationMs: 0, rms: 0, peak: 0 });
+export const emptyMetrics = (): AudioMetrics => ({
+  sampleRate: 16000,
+  channels: 1,
+  samples: 0,
+  durationMs: 0,
+  rms: 0,
+  peak: 0,
+});
 
 // Serializes startup/teardown even if the user quickly pauses and resumes.
 export class CaptureManager {
@@ -30,20 +44,44 @@ export class CaptureManager {
     this.active = undefined;
     if (run) {
       run.abort.abort();
-      this.draining = this.draining.then(() => run.pending.then(handle => handle.stop(), () => {}));
+      this.draining = this.draining.then(() =>
+        run.pending.then(
+          (handle) => handle.stop(),
+          () => {},
+        ),
+      );
     }
     return this.draining;
   }
-  async start(sourceId: string, metrics: (data: AudioMetrics) => void, error: (message: string) => void, pcm?: (data: Uint8Array) => void) {
+  async start(
+    sourceId: string,
+    metrics: (data: AudioMetrics) => void,
+    error: (message: string) => void,
+    pcm?: (data: Uint8Array) => void,
+  ) {
     const revision = ++this.revision;
     await this.detach();
     if (revision !== this.revision) return false;
-    const run = { abort: new AbortController(), pending: Promise.resolve(null as unknown as CaptureHandle) };
+    const run = {
+      abort: new AbortController(),
+      pending: Promise.resolve(null as unknown as CaptureHandle),
+    };
     this.active = run;
-    run.pending = Promise.resolve().then(() => this.backend.start(sourceId, run.abort.signal,
-      data => { if (this.active === run && !run.abort.signal.aborted) metrics(data); },
-      message => { if (this.active === run && !run.abort.signal.aborted) error(message); },
-      data => { if (this.active === run && !run.abort.signal.aborted) pcm?.(data); }));
+    run.pending = Promise.resolve().then(() =>
+      this.backend.start(
+        sourceId,
+        run.abort.signal,
+        (data) => {
+          if (this.active === run && !run.abort.signal.aborted) metrics(data);
+        },
+        (message) => {
+          if (this.active === run && !run.abort.signal.aborted) error(message);
+        },
+        (data) => {
+          if (this.active === run && !run.abort.signal.aborted) pcm?.(data);
+        },
+      ),
+    );
     try {
       await run.pending;
       return this.active === run && !run.abort.signal.aborted;
@@ -54,5 +92,8 @@ export class CaptureManager {
       return false;
     }
   }
-  stop() { this.revision += 1; return this.detach(); }
+  stop() {
+    this.revision += 1;
+    return this.detach();
+  }
 }

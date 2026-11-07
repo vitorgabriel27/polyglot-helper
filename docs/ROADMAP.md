@@ -23,16 +23,16 @@ O usuário incluiu harness de agentes, System 1 local, cascatas de modelos e esc
 
 ## Visão dos marcos
 
-| Marco | Meta e entrega | Estimativa | Dependência |
-| --- | --- | --- | --- |
-| M0 | Escopo e matriz de suporte decididos | 0,5–1 dia | Nenhuma |
-| M1 | Sobreposição e captura viáveis nos dois sistemas | 3–6 dias | M0 |
-| M2 | Base compartilhada e contratos estáveis | 2–3 dias | M1 |
-| MR | Harness, System 1, gate, cascata e avaliação inicial | A estimar após inventário e desenho do dataset | M2; protocolo/dataset podem começar antes |
-| M3 | Transcrição real de ponta a ponta integrada ao harness | 3–5 dias, a revisar com MR | M2 + contratos/gate/cascata de MR |
-| M4 | Notch mínima e configuração rápida integradas | 2–4 dias | M3 |
-| M5 | Tradução e pronúncia opcional | 3–5 dias | M4 |
-| M6 | Instaladores e piloto validado em ambos os SOs | 3–5 dias | M5 |
+| Marco | Meta e entrega                                         | Estimativa                                     | Dependência                               |
+| ----- | ------------------------------------------------------ | ---------------------------------------------- | ----------------------------------------- |
+| M0    | Escopo e matriz de suporte decididos                   | 0,5–1 dia                                      | Nenhuma                                   |
+| M1    | Sobreposição e captura viáveis nos dois sistemas       | 3–6 dias                                       | M0                                        |
+| M2    | Base compartilhada e contratos estáveis                | 2–3 dias                                       | M1                                        |
+| MR    | Harness, System 1, gate, cascata e avaliação inicial   | A estimar após inventário e desenho do dataset | M2; protocolo/dataset podem começar antes |
+| M3    | Transcrição real de ponta a ponta integrada ao harness | 3–5 dias, a revisar com MR                     | M2 + contratos/gate/cascata de MR         |
+| M4    | Notch mínima e configuração rápida integradas          | 2–4 dias                                       | M3                                        |
+| M5    | Tradução e pronúncia opcional                          | 3–5 dias                                       | M4                                        |
+| M6    | Instaladores e piloto validado em ambos os SOs         | 3–5 dias                                       | M5                                        |
 
 Estimativa histórica anterior à inclusão do harness: **16,5–29 dias de trabalho**, mais disponibilidade de máquinas, contas e usuários. Reestimar após M1. Processamento totalmente local, integração específica de Wayland ou assinatura comercial podem alterar esforço e prazo. Não declarar suporte multiplataforma com apenas testes em um SO. **O total atual não está fechado**: incluir MR e reestimar M3/M5/M6 antes de prometer datas.
 
@@ -169,13 +169,13 @@ Baseline local em inglês implementado: captura Linux → PCM → segmentador �
 
 ## Registro de progresso
 
-| Data | Marco/tarefa | Evidência | Resultado / próximo passo |
-| --- | --- | --- | --- |
-| 07/11/2026 | Planejamento | Este arquivo e ARQUITETURA.md | Plano salvo; Windows e Linux incluídos |
-| 07/11/2026 | ASR local inicial | workers/asr; core/speech; testes de ASR | Whisper base.en/CPU preparado, worker offline e caminho PipeWire testados; Parakeet v3 candidato; Windows/tradução/harness pendentes |
-| 07/11/2026 | Captura e onboarding / UX-01 e UX-02 | src/adapters/audio; settings-store; testes | Notch aceita pelo usuário; captura local Linux e preferências implementadas; autostart opt-in; Windows nativo pendente |
-| 07/11/2026 | Base desktop / BASE-01 e BASE-05 | src/desktop; tests; DESENVOLVIMENTO.md | Pasta oficial e main definidas; notch/demo e IPC restrito; checks locais; Windows nativo adiado por decisão do usuário |
-| 07/11/2026 | Pesquisa / novo MR | research/HARNESS-CASCATAS.md | Artigo lido; arquitetura adaptada; 15 tarefas de pesquisa adicionadas; implementação pendente; prazo global a reestimar |
-| 07/11/2026 | M0 / DEC-02, DEC-04, DEC-05 | decisions/M0-ESCOPO.md; validation/M0-AMBIENTE.md | Política de suporte e recorte registrados; Linux identificado; Windows dual boot confirmado pelo usuário; comparar remoto/local antes de decidir; DEC-01/03/06 pendentes |
+| Data       | Marco/tarefa                         | Evidência                                         | Resultado / próximo passo                                                                                                                                                |
+| ---------- | ------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 07/11/2026 | Planejamento                         | Este arquivo e ARQUITETURA.md                     | Plano salvo; Windows e Linux incluídos                                                                                                                                   |
+| 07/11/2026 | ASR local inicial                    | workers/asr; core/speech; testes de ASR           | Whisper base.en/CPU preparado, worker offline e caminho PipeWire testados; Parakeet v3 candidato; Windows/tradução/harness pendentes                                     |
+| 07/11/2026 | Captura e onboarding / UX-01 e UX-02 | src/adapters/audio; settings-store; testes        | Notch aceita pelo usuário; captura local Linux e preferências implementadas; autostart opt-in; Windows nativo pendente                                                   |
+| 07/11/2026 | Base desktop / BASE-01 e BASE-05     | src/desktop; tests; DESENVOLVIMENTO.md            | Pasta oficial e main definidas; notch/demo e IPC restrito; checks locais; Windows nativo adiado por decisão do usuário                                                   |
+| 07/11/2026 | Pesquisa / novo MR                   | research/HARNESS-CASCATAS.md                      | Artigo lido; arquitetura adaptada; 15 tarefas de pesquisa adicionadas; implementação pendente; prazo global a reestimar                                                  |
+| 07/11/2026 | M0 / DEC-02, DEC-04, DEC-05          | decisions/M0-ESCOPO.md; validation/M0-AMBIENTE.md | Política de suporte e recorte registrados; Linux identificado; Windows dual boot confirmado pelo usuário; comparar remoto/local antes de decidir; DEC-01/03/06 pendentes |
 
 Ao encerrar uma sessão de trabalho: marcar apenas tarefas aceitas, registrar evidência e bloqueios, atualizar estimativa se houver descoberta material e indicar a próxima tarefa executável. Não iniciar M3 remoto sem DEC-03.

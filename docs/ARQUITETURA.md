@@ -19,6 +19,7 @@ Onboarding de primeira abertura, preferências persistentes e autostart opt-in i
 Aplicativo desktop para **Windows e Linux**, com uma pequena notch flutuante e clicável, que expande apenas o necessário para exibir legendas e configurações rápidas. Ambos são plataformas do MVP; versões e ambientes gráficos de referência serão definidos em M0 do [roadmap](ROADMAP.md). Primeiro idioma: inglês americano, com tradução para português brasileiro.
 
 Estados visuais:
+
 - Recolhida: nome/indicador de estado, iniciar ou retomar ao clicar.
 - Legendando: original em até duas linhas; tradução opcional abaixo; largura limitada e fonte ajustável. Fala longa substitui segmentos antigos, sem aumentar indefinidamente a janela.
 - Configurando: clicar na notch abre painel ancorado com fonte (sistema/microfone), idiomas, tradução, pronúncia, tamanho e pausar/parar. Escape ou clique fora fecha o painel sem encerrar a sessão.
@@ -31,18 +32,18 @@ Posição proposta: topo central com margem configurável. Alternativa: arraste 
 
 ## 2. Stack escolhida
 
-| Camada | Escolha | Responsabilidade |
-| --- | --- | --- |
-| Desktop | Electron + TypeScript | Janelas, foco, atalhos, permissões e ciclo de vida |
-| Interface | React + Vite + CSS | Notch, legendas e configurações; transições CSS respeitando redução de movimento |
-| Estado | Máquina de estados explícita em TypeScript; Zustand para preferências/UI | Sessão controlada por eventos; UI não comanda diretamente dispositivos |
-| Captura | Adaptadores Windows (loopback/microfone) e Linux/PipeWire | Validar caminho Electron e alternativa nativa por SO; sistema e microfone são fontes distintas |
-| Processamento de áudio | Worker/processo utilitário + PCM mono | Normalização de taxa, timestamps, buffers limitados e envio sem bloquear a interface |
-| Transcrição | Cascata ASR local → local maior opcional → API candidata Deepgram | System 1/controlador selecionam estágio; gate autoriza efeitos e envio |
-| Tradução | Cache → tradução local → API candidata DeepL/LLM | Modelos locais e destino remoto escolhidos por benchmark; nunca liberar nuvem só por confiança |
-| Persistência | JSON versionado e gravação atômica no diretório userData | Preferências apenas; sem banco no MVP |
-| Ferramentas | pnpm, ESLint, TypeScript, Vitest e Playwright | Tipagem, verificação de eventos, testes de interface e fluxos críticos |
-| Distribuição | electron-builder | Instaladores Windows e Linux; modelos e serviços não embutidos no renderer |
+| Camada                 | Escolha                                                                  | Responsabilidade                                                                               |
+| ---------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| Desktop                | Electron + TypeScript                                                    | Janelas, foco, atalhos, permissões e ciclo de vida                                             |
+| Interface              | React + Vite + CSS                                                       | Notch, legendas e configurações; transições CSS respeitando redução de movimento               |
+| Estado                 | Máquina de estados explícita em TypeScript; Zustand para preferências/UI | Sessão controlada por eventos; UI não comanda diretamente dispositivos                         |
+| Captura                | Adaptadores Windows (loopback/microfone) e Linux/PipeWire                | Validar caminho Electron e alternativa nativa por SO; sistema e microfone são fontes distintas |
+| Processamento de áudio | Worker/processo utilitário + PCM mono                                    | Normalização de taxa, timestamps, buffers limitados e envio sem bloquear a interface           |
+| Transcrição            | Cascata ASR local → local maior opcional → API candidata Deepgram        | System 1/controlador selecionam estágio; gate autoriza efeitos e envio                         |
+| Tradução               | Cache → tradução local → API candidata DeepL/LLM                         | Modelos locais e destino remoto escolhidos por benchmark; nunca liberar nuvem só por confiança |
+| Persistência           | JSON versionado e gravação atômica no diretório userData                 | Preferências apenas; sem banco no MVP                                                          |
+| Ferramentas            | pnpm, ESLint, TypeScript, Vitest e Playwright                            | Tipagem, verificação de eventos, testes de interface e fluxos críticos                         |
+| Distribuição           | electron-builder                                                         | Instaladores Windows e Linux; modelos e serviços não embutidos no renderer                     |
 
 Para piloto pessoal, credenciais próprias ficam no armazenamento seguro do SO, acessadas apenas pelo processo principal; validar disponibilidade do keyring e não persistir em texto puro como fallback. Renderer recebe apenas operações específicas por preload.
 
@@ -61,6 +62,7 @@ Palavra selecionada → adaptador lexical → pronúncia e significado no contex
 Renderer → preload com métodos restritos → processo principal/coordenador → captura/provedores. Fluxo de atualização retorna por eventos tipados. Nenhum módulo de interface lê arquivos, executa comandos ou acessa chaves.
 
 Contratos mínimos:
+
 - AudioSource: listSources(), start(sourceId), stop(); entrega AudioChunk com sequência, timestamp e formato.
 - SpeechProvider: connect(language, format), send(chunk), close(); emite TranscriptSegment.
 - TranslationProvider: translate(segmentId, revision, text, source, target, context, signal).

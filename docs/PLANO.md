@@ -29,14 +29,14 @@ Fora da primeira entrega: tradução universal de toda a tela, todos os idiomas,
 
 ## Fases e critérios de saída
 
-| Fase | Entrega | Como aceitar |
-| --- | --- | --- |
-| Experiência | Protótipo com exemplos | Testar com 3–5 pessoas: escolher fonte, entender frase e salvar palavra sem orientação; registrar distração e preferências |
-| Viabilidade desktop | Janela sobreposta + atalho para interagir + captura de região e áudio por 60 s | Validar no SO/compositor real, dois monitores, escala e janela cheia; documentar combinações sem suporte |
-| Texto funcional | OCR por comando, tradução e consulta fonética | Amostra de 30 capturas variadas; registrar erros de OCR, tradução e tempo total; nenhuma recaptura do próprio overlay |
-| Áudio funcional | Transcrição e tradução por segmentos | Sessões de 10 min; medir atraso p50/p95, revisões e perdas; meta inicial p95 ≤ 3 s após fim do segmento, a validar |
-| Aprendizado | Salvar, consultar e excluir vocabulário | Persistir localmente, evitar duplicatas por idioma e recuperar após reiniciar |
-| Piloto | Instalador no SO escolhido e diagnóstico | Sessão contínua de 30 min; sem captura após parar; custo por hora e uso de CPU/RAM registrados |
+| Fase                | Entrega                                                                        | Como aceitar                                                                                                               |
+| ------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Experiência         | Protótipo com exemplos                                                         | Testar com 3–5 pessoas: escolher fonte, entender frase e salvar palavra sem orientação; registrar distração e preferências |
+| Viabilidade desktop | Janela sobreposta + atalho para interagir + captura de região e áudio por 60 s | Validar no SO/compositor real, dois monitores, escala e janela cheia; documentar combinações sem suporte                   |
+| Texto funcional     | OCR por comando, tradução e consulta fonética                                  | Amostra de 30 capturas variadas; registrar erros de OCR, tradução e tempo total; nenhuma recaptura do próprio overlay      |
+| Áudio funcional     | Transcrição e tradução por segmentos                                           | Sessões de 10 min; medir atraso p50/p95, revisões e perdas; meta inicial p95 ≤ 3 s após fim do segmento, a validar         |
+| Aprendizado         | Salvar, consultar e excluir vocabulário                                        | Persistir localmente, evitar duplicatas por idioma e recuperar após reiniciar                                              |
+| Piloto              | Instalador no SO escolhido e diagnóstico                                       | Sessão contínua de 30 min; sem captura após parar; custo por hora e uso de CPU/RAM registrados                             |
 
 Sem estimar datas antes da prova de captura/sobreposição: essa é a principal incerteza técnica.
 

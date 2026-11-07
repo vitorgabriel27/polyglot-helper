@@ -14,17 +14,17 @@ Renderer com sandbox, contextIsolation, nodeIntegration desabilitado, CSP sem co
 
 ## Verificações realizadas
 
-| Verificação | Resultado | Limite |
-| --- | --- | --- |
-| TypeScript | Passou | Não valida comportamento nativo |
-| ESLint | Passou | Não substitui revisão de segurança |
-| Vitest | 5 testes passaram | Geração antiga, revisão fora de ordem/pós-final, segmento antigo, stop e payload IPC inválido |
-| Build Vite/esbuild | Passou | Sem instalador nesta etapa |
-| Playwright Electron com flag de app X11 | Passou, backend então não comprovado | Comprovação X11/XWayland corrigida e executada no relatório atual |
-| Playwright Electron Wayland nativo | Passou | Desktop/compositor atual apenas |
-| Screenshot da notch | Inspecionado | Demo com original, tradução e IPA; não representa todos os tamanhos/monitores |
-| Windows nativo | Não executado | Adiado pelo usuário para clone e validação futura |
-| Workflow GitHub Windows/Linux | Preparado | Ainda não executado em servidor remoto |
+| Verificação                             | Resultado                            | Limite                                                                                        |
+| --------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------- |
+| TypeScript                              | Passou                               | Não valida comportamento nativo                                                               |
+| ESLint                                  | Passou                               | Não substitui revisão de segurança                                                            |
+| Vitest                                  | 5 testes passaram                    | Geração antiga, revisão fora de ordem/pós-final, segmento antigo, stop e payload IPC inválido |
+| Build Vite/esbuild                      | Passou                               | Sem instalador nesta etapa                                                                    |
+| Playwright Electron com flag de app X11 | Passou, backend então não comprovado | Comprovação X11/XWayland corrigida e executada no relatório atual                             |
+| Playwright Electron Wayland nativo      | Passou                               | Desktop/compositor atual apenas                                                               |
+| Screenshot da notch                     | Inspecionado                         | Demo com original, tradução e IPA; não representa todos os tamanhos/monitores                 |
+| Windows nativo                          | Não executado                        | Adiado pelo usuário para clone e validação futura                                             |
+| Workflow GitHub Windows/Linux           | Preparado                            | Ainda não executado em servidor remoto                                                        |
 
 O teste desktop abre notch/configurações, inicia e pausa/retoma fixtures, ativa IPA, fecha painel por Escape, verifica isolamento de Node no renderer, API pública mínima e rejeição de comando arbitrário. A escolha da página é pela URL, sem assumir ordem de abertura entre janelas.
 

@@ -11,9 +11,19 @@ if (process.platform === 'linux') {
 }
 const environment = { ...process.env };
 delete environment.ELECTRON_RUN_AS_NODE;
-const child = spawn(process.execPath, [require.resolve('electron/cli.js'), '.', ...flags, ...requested], {
-  stdio: 'inherit', env: environment,
+const child = spawn(
+  process.execPath,
+  [require.resolve('electron/cli.js'), '.', ...flags, ...requested],
+  {
+    stdio: 'inherit',
+    env: environment,
+  },
+);
+child.on('error', (cause) => {
+  console.error(cause.message);
+  process.exitCode = 1;
 });
-child.on('error', cause => { console.error(cause.message); process.exitCode = 1; });
-child.on('exit', code => { process.exitCode = code ?? 1; });
+child.on('exit', (code) => {
+  process.exitCode = code ?? 1;
+});
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => child.kill(signal));

@@ -17,18 +17,18 @@ O usuário confirmou que a notch inicial funcionou no próprio computador. Isso 
 
 ## Evidências de teste
 
-| Verificação | Evidência / resultado |
-| --- | --- |
-| TypeScript, ESLint e build | Passaram com Node 22.22.0 |
-| Vitest normal | 13 testes passaram; ensaio nativo de áudio ignorado por padrão |
-| Persistência | Perfil temporário reaberto mantém onboarding, fonte, IPA/tamanho; arquivo inválido preservado para recuperação |
-| Autostart Linux | Ativação/desativação em pasta temporária; Desktop Entry com espaços/caracteres especiais validada com desktop-file-validate |
-| Desktop X11/XWayland | 2 testes passaram: setup/demo/IPC; fonte e preferências após relaunch, sem captura automática |
-| Ordem real de janelas | HELPER_CHECK_STACKING=1: leitura EWMH via xprop mostrou notch acima da janela de teste e foco permaneceu na janela de teste |
-| Wayland nativo | Fluxos de configuração/restauração testados; não demonstra garantia de posição/z-order global |
-| PipeWire real, 60 s | Ensaio opt-in passou em 60,48 s; capturou pelo menos 60 s de tom sintético em saída virtual isolada e parou sem novas métricas |
-| Screenshot inicial | Inspecionado: painel com fonte, preferências e opt-in de autostart legíveis |
-| Windows | Código preparado; execução nativa/autostart/captura ainda não validados; captura Windows apresenta indisponibilidade explícita |
+| Verificação                | Evidência / resultado                                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| TypeScript, ESLint e build | Passaram com Node 22.22.0                                                                                                      |
+| Vitest normal              | 13 testes passaram; ensaio nativo de áudio ignorado por padrão                                                                 |
+| Persistência               | Perfil temporário reaberto mantém onboarding, fonte, IPA/tamanho; arquivo inválido preservado para recuperação                 |
+| Autostart Linux            | Ativação/desativação em pasta temporária; Desktop Entry com espaços/caracteres especiais validada com desktop-file-validate    |
+| Desktop X11/XWayland       | 2 testes passaram: setup/demo/IPC; fonte e preferências após relaunch, sem captura automática                                  |
+| Ordem real de janelas      | HELPER_CHECK_STACKING=1: leitura EWMH via xprop mostrou notch acima da janela de teste e foco permaneceu na janela de teste    |
+| Wayland nativo             | Fluxos de configuração/restauração testados; não demonstra garantia de posição/z-order global                                  |
+| PipeWire real, 60 s        | Ensaio opt-in passou em 60,48 s; capturou pelo menos 60 s de tom sintético em saída virtual isolada e parou sem novas métricas |
+| Screenshot inicial         | Inspecionado: painel com fonte, preferências e opt-in de autostart legíveis                                                    |
+| Windows                    | Código preparado; execução nativa/autostart/captura ainda não validados; captura Windows apresenta indisponibilidade explícita |
 
 O ensaio PipeWire cria um nó virtual com nome único, envia o tom só a esse nó e remove o nó no finally. Não usa microfone nem conteúdo de outros aplicativos. Não altera a configuração persistente de áudio. Microfone físico e troca para fones ainda precisam de teste manual.
 

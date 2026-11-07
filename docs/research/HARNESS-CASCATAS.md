@@ -32,26 +32,26 @@ Todo efeito externo/controlado atravessa: proposta tipada → gate autoritativo 
 
 Agentes são módulos especializados com contratos e resultados estruturados, não múltiplas LLMs conversando sem limite. Não exigem um framework multiagente nem processos separados para cada papel.
 
-| Componente | Papel | Não pode fazer |
-| --- | --- | --- |
-| Agente de captura | Obter fonte escolhida e emitir buffers | Iniciar sozinho ou trocar dispositivo por sugestão de conteúdo |
-| Agente STT | Propor transcrição e sinais de qualidade | Alterar política de dados |
-| Agente de tradução | Traduzir segmento/contexto permitido | Interpretar texto traduzido como comando |
-| Agente lexical | Consultar pronúncia/entrada local | Inventar IPA ou salvar histórico implicitamente |
-| System 1 | Estimar rota e necessidade de escalada | Autorizar rede, ferramenta ou captura |
-| Detector OOD | Sinalizar novidade/incerteza | Garantir segurança ou forçar nuvem |
-| Controlador | Executar grafo limitado por deadline/orçamento | Ignorar veto do gate |
-| Gate | Validar intenção contra estado confiável atual | Delegar permissão ao modelo |
-| Executor | Executar operação autorizada, sem ampliar escopo | Reutilizar autorização ou aceitar argumento alterado |
-| Avaliador | Medir execução em replay/benchmark | Usar rótulos do teste para reajustar roteador |
+| Componente         | Papel                                            | Não pode fazer                                                 |
+| ------------------ | ------------------------------------------------ | -------------------------------------------------------------- |
+| Agente de captura  | Obter fonte escolhida e emitir buffers           | Iniciar sozinho ou trocar dispositivo por sugestão de conteúdo |
+| Agente STT         | Propor transcrição e sinais de qualidade         | Alterar política de dados                                      |
+| Agente de tradução | Traduzir segmento/contexto permitido             | Interpretar texto traduzido como comando                       |
+| Agente lexical     | Consultar pronúncia/entrada local                | Inventar IPA ou salvar histórico implicitamente                |
+| System 1           | Estimar rota e necessidade de escalada           | Autorizar rede, ferramenta ou captura                          |
+| Detector OOD       | Sinalizar novidade/incerteza                     | Garantir segurança ou forçar nuvem                             |
+| Controlador        | Executar grafo limitado por deadline/orçamento   | Ignorar veto do gate                                           |
+| Gate               | Validar intenção contra estado confiável atual   | Delegar permissão ao modelo                                    |
+| Executor           | Executar operação autorizada, sem ampliar escopo | Reutilizar autorização ou aceitar argumento alterado           |
+| Avaliador          | Medir execução em replay/benchmark               | Usar rótulos do teste para reajustar roteador                  |
 
 ## 3. Cascatas por tarefa
 
-| Tarefa | Estágio 0 | Estágio 1 local | Estágio 2 local opcional | Último estágio |
-| --- | --- | --- | --- | --- |
-| STT | Silêncio/VAD e validação do formato | Modelo ASR pequeno | ASR local maior em trecho curto | API STT, somente com áudio autorizado |
-| Tradução | Cache por texto/idiomas/versão e consulta exata | Modelo local de tradução | Modelo local mais capaz, se justificar | API de tradução ou LLM, com texto mínimo autorizado |
-| Pronúncia | Léxico local por palavra/variante | G2P local, se validado e identificado como estimativa | Normalmente dispensável | Consulta externa opcional; ausência continua resultado válido |
+| Tarefa    | Estágio 0                                       | Estágio 1 local                                       | Estágio 2 local opcional               | Último estágio                                                |
+| --------- | ----------------------------------------------- | ----------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------- |
+| STT       | Silêncio/VAD e validação do formato             | Modelo ASR pequeno                                    | ASR local maior em trecho curto        | API STT, somente com áudio autorizado                         |
+| Tradução  | Cache por texto/idiomas/versão e consulta exata | Modelo local de tradução                              | Modelo local mais capaz, se justificar | API de tradução ou LLM, com texto mínimo autorizado           |
+| Pronúncia | Léxico local por palavra/variante               | G2P local, se validado e identificado como estimativa | Normalmente dispensável                | Consulta externa opcional; ausência continua resultado válido |
 
 Nenhum classificador TF–IDF gera transcrição ou tradução. System 1 é o roteador. Primeiro áudio pode exigir ASR local para obter texto; até esse ponto, decisões de ASR usam sinais acústicos/operacionais ou política explícita, e não um texto inexistente.
 
