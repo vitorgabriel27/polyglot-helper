@@ -42,6 +42,6 @@ Parakeet ou Whisper fazem ASR; o roteador System 1 continua um componente separa
 - Teste local PipeWire isolado → PCM → segmentador → worker → resultado parcial/final passou. A fixture é baixada apenas pelo teste; inferência não consulta a rede.
 - Testes unitários verificam silêncio, limite de janelas, backpressure e cancelamento; regressões desktop preservam onboarding e preferências.
 
-O estágio não implementa tradução real, IPA para fala, System 1 treinado, Parakeet nem cascata real. Esses itens permanecem no roadmap.
+O baseline ASR não implementa IPA para fala, System 1 treinado, Parakeet nem integração da cascata ao fluxo real. A tradução local existe em worker separado, mas ainda não é controlada pelo harness. Esses itens permanecem no roadmap.
 
 Relatório reproduzível da implementação: [ASR-INICIAL.md](../validation/ASR-INICIAL.md).

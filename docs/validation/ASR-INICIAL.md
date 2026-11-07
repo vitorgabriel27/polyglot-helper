@@ -22,7 +22,7 @@ Não houve benchmark com conversas pessoais, seleção automática de nuvem ou t
 
 ## Limites
 
-- Modelo atual só reconhece inglês; tradução/IPA reais e cascata ainda não implementadas.
+- Modelo ASR atual só reconhece inglês. A tradução local está implementada em worker separado; IPA para áudio e integração do controlador do harness ao fluxo real de ASR continuam pendentes.
 - Segmentação por energia é aproximada; Silero VAD atua no worker. Avaliar fala baixa, música, ruído e corte de palavras em janelas de 6 s.
 - Whisper não virou vencedor do benchmark. [Parakeet v3 está na comparação planejada](../decisions/ASR-LOCAL.md), sem números inventados para a RTX 3050.
 - Windows captura não integrada; worker/protocolo/setup escritos para Windows/Linux, validação nativa ainda pendente.

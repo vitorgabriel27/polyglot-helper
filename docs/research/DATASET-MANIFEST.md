@@ -17,3 +17,9 @@ Separar por sessão, locutor e família de paráfrases em treino, validação e 
 ## Armazenamento e exclusão
 
 Áudio e texto de pesquisa ficam fora de logs de produto, em diretório/repositório com acesso e retenção próprios. Não há importação automática de captura ao vivo. Sem consentimento rastreável, referência válida ou direito de uso, o item é excluído. O manifesto publicado não deve conter áudio, transcrição, credenciais ou dados pessoais.
+
+## Validação do manifesto
+
+Os metadados podem ser preparados como JSONL e verificados antes de qualquer treino por `scripts/research/validate_dataset.py`. Cada linha registra versão, ID da amostra, split, IDs de agrupamento, tarefa/idioma, referência, rótulo de rota, decisão permitida, política, consentimento com finalidade e expiração, procedência/licença e SHA-256 do conteúdo. Amostras do split de teste precisam estar explicitamente congeladas. O validador rejeita consentimento ausente/expirado, hash inválido, versão inconsistente e qualquer sessão, locutor ou família de paráfrases presente em mais de um split.
+
+Os testes usam registros inteiramente sintéticos em diretório temporário e não criam dataset de pesquisa.
