@@ -157,42 +157,76 @@ p {
 .large .translation {
   font-size: 15px;
 }
-.settings {
+.settings-shell {
+  position: relative;
   margin: 4px;
-  background: #191f1b;
-  border: 1px solid #3c4840;
-  border-radius: 18px;
-  padding: 20px;
-  max-height: 510px;
-  overflow: auto;
+  background: #050706;
+  border: 1px solid #29342e;
+  border-radius: 24px;
+  height: calc(100vh - 8px);
+  max-height: 610px;
+  overflow: hidden;
+  color: #f3f6f4;
 }
-header {
+.settings {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 20px 24px 20px 18px;
+  scrollbar-width: none;
+}
+.settings::-webkit-scrollbar {
+  display: none;
+  width: 0;
+}
+.settings-scroll-thumb {
+  pointer-events: none;
+  position: absolute;
+  right: 8px;
+  top: 12px;
+  width: 5px;
+  background: #52665a;
+  border-radius: 999px;
+  transition: background-color 120ms ease;
+}
+.settings header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
-header button {
-  background: none;
-  border: 0;
+.settings header button {
+  background: #0b100d;
+  border: 1px solid #4f6b59;
+  color: #b0edc4;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
   font-size: 23px;
-  padding: 0 7px;
+  padding: 0;
 }
-h1 {
+.settings header button:hover {
+  background: #13231a;
+  border-color: #a3e7ba;
+}
+.settings h1 {
   font-size: 23px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: -0.5px;
   margin: 4px 0 0;
 }
 .eyebrow {
   font-size: 10px;
   letter-spacing: 2px;
-  color: #b3c4b9;
+  color: #92c6a1;
 }
 .notice {
   font-size: 12px;
-  color: #bdd5c6;
-  background: #25342b;
+  color: #b3dec0;
+  background: #101a14;
+  border: 1px solid #23382a;
   padding: 9px 11px;
   border-radius: 8px;
   margin-bottom: 12px;
@@ -203,7 +237,7 @@ h1 {
   align-items: center;
   justify-content: space-between;
   padding: 12px 0;
-  border-bottom: 1px solid #303b33;
+  border-bottom: 1px solid #202a23;
   font-size: 13px;
 }
 .field strong {
@@ -214,22 +248,22 @@ h1 {
   color: #a3b6a8;
 }
 .field input {
-  accent-color: #a3e7ba;
+  accent-color: #9ee5b5;
   width: 17px;
   height: 17px;
   margin: 0;
 }
 .field select {
-  background: #27332b;
+  background: #0d130f;
   color: inherit;
-  border: 1px solid #4a5a50;
-  border-radius: 6px;
-  padding: 5px;
+  border: 1px solid #34483a;
+  border-radius: 9px;
+  padding: 7px 9px;
 }
 .hint {
   font-size: 11px;
   line-height: 1.5;
-  color: #a9baae;
+  color: #9aaba0;
   margin-top: 12px;
 }
 .actions {
@@ -240,12 +274,14 @@ h1 {
   font-size: 12px;
 }
 .primary {
-  background: #b0e7c2;
-  color: #13251a;
-  border-color: transparent;
+  background: #a5e9ba;
+  color: #07100a;
+  border-color: #a5e9ba;
+  border-radius: 12px;
+  font-weight: 600;
 }
 .primary:hover {
-  background: #c7f5d7;
+  background: #c0f4ce;
 }
 @media (prefers-reduced-motion: reduce) {
   * {
@@ -257,13 +293,14 @@ h1 {
 .grip {
   -webkit-app-region: drag;
   app-region: drag;
+  cursor: grab;
   color: #809087;
   user-select: none;
   padding: 0 4px;
   font-size: 12px;
 }
-.settings {
-  max-height: 610px;
+.grip:active {
+  cursor: grabbing;
 }
 .source-field {
   display: flex;
@@ -275,11 +312,11 @@ h1 {
 .source-field select {
   max-width: 100%;
   width: 100%;
-  background: #27332b;
+  background: #0d130f;
   color: inherit;
-  border: 1px solid #4a5a50;
-  border-radius: 6px;
-  padding: 8px;
+  border: 1px solid #34483a;
+  border-radius: 9px;
+  padding: 9px;
   font-size: 12px;
 }
 .source-refresh {
@@ -336,10 +373,6 @@ button:disabled {
 }
 .field {
   gap: 10px;
-}
-
-.settings {
-  max-height: calc(100vh - 8px);
 }
 
 .live-status {

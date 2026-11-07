@@ -37,7 +37,11 @@ export function NotchView({
       aria-label="PolyglotHelper"
     >
       <div className="notch-bar">
-        <span className="source-icon" aria-hidden="true">
+        <span
+          className="source-icon grip"
+          aria-label="Segure para mover a notch"
+          title="Segure para mover"
+        >
           {isAudio ? '♫' : '◉'}
         </span>
         <button
