@@ -19,10 +19,12 @@ import {
   type SpeechStatus,
 } from '../core/speech';
 import { LocalSpeech } from '../adapters/speech/local';
+import { TranslationPipeline, type TranslationStatus } from '../core/translation';
+import { LocalTranslation } from '../adapters/translation/local';
 import { Session } from '../core/session';
 import { CaptureManager, emptyMetrics, type AudioSource } from '../core/audio';
 import { defaults } from '../core/preferences';
-import { isCommand, type Snapshot, type UserSettings } from '../core/contracts';
+import { isCommand, type Segment, type Snapshot, type UserSettings } from '../core/contracts';
 import { startDemo } from '../adapters/demo';
 import { platformAudio } from '../adapters/audio/platform';
 import { SettingsStore } from './settings-store';
@@ -49,6 +51,15 @@ const controller = new Session();
 const audio = platformAudio();
 const capture = new CaptureManager(audio);
 const localSpeech = new LocalSpeech(app.getAppPath());
+const localTranslation = new LocalTranslation(app.getAppPath());
+let translationPipeline: TranslationPipeline | undefined;
+let translationDraining: Promise<void> = Promise.resolve();
+let translationStatus: TranslationStatus = {
+  available: false,
+  state: 'idle',
+  error: null,
+  decodeMs: null,
+};
 let speechHandle: SpeechHandle | undefined;
 let speechAbort: AbortController | undefined;
 let captionPipeline: CaptionPipeline | undefined;
@@ -117,6 +128,7 @@ function snapshot(): Snapshot {
     metrics,
     error,
     speech: speechStatus,
+    translation: translationStatus,
   };
 }
 function position(recenter = false) {
@@ -200,6 +212,60 @@ async function refreshSources() {
     publish();
   }
 }
+function submitTranslation(segment: Segment) {
+  if (!userSettings.preferences.translation || !userSettings.sourceId || quitting) return;
+  if (!translationPipeline) {
+    const generation = controller.generation;
+    const pipeline = new TranslationPipeline(
+      {
+        start: async (signal, onFailure) => {
+          await translationDraining;
+          return localTranslation.start(signal, onFailure);
+        },
+      },
+      (request, answer) => {
+        if (
+          translationPipeline !== pipeline ||
+          generation !== controller.generation ||
+          !userSettings.preferences.translation
+        )
+          return;
+        if (controller.applyTranslation(request, answer.text)) {
+          translationStatus = { ...translationStatus, decodeMs: answer.decodeMs };
+          publish();
+        }
+      },
+      (state, message) => {
+        if (translationPipeline !== pipeline || generation !== controller.generation) return;
+        translationStatus = {
+          ...translationStatus,
+          state,
+          error: message || null,
+          available:
+            state === 'translating' || state === 'ready' ? true : translationStatus.available,
+        };
+        publish();
+      },
+    );
+    translationPipeline = pipeline;
+  }
+  translationPipeline.submit(segment);
+}
+async function stopTranslation() {
+  const pipeline = translationPipeline;
+  translationPipeline = undefined;
+  controller.clearTranslation();
+  translationStatus = {
+    ...translationStatus,
+    state: userSettings.preferences.translation ? 'idle' : 'disabled',
+    error: null,
+  };
+  if (pipeline) {
+    const stopped = pipeline.stop();
+    translationDraining = translationDraining.then(() => stopped);
+  }
+  await translationDraining;
+}
 async function stopSpeech() {
   captionPipeline?.stop();
   captionPipeline = undefined;
@@ -227,7 +293,7 @@ function failSession(generation: number, message: string) {
   metrics = { ...metrics, rms: 0, peak: 0 };
   speechStatus = { ...speechStatus, state: 'error' };
   publish();
-  run(Promise.all([capture.stop(), stopSpeech()]).then(() => {}));
+  run(Promise.all([capture.stop(), stopSpeech(), stopTranslation()]).then(() => {}));
 }
 async function endCapture(pause = false) {
   stopDemo?.();
@@ -237,7 +303,7 @@ async function endCapture(pause = false) {
   metrics = { ...metrics, rms: 0, peak: 0 };
   publish();
   try {
-    await Promise.all([capture.stop(), stopSpeech()]);
+    await Promise.all([capture.stop(), stopSpeech(), stopTranslation()]);
   } catch {
     error = 'A captura não encerrou corretamente. Feche o aplicativo antes de retomar.';
     controller.fail(controller.generation);
@@ -290,7 +356,7 @@ async function toggle() {
       (utterance, answer) => {
         if (generation !== controller.generation) return;
         speechStatus = { ...speechStatus, decodeMs: answer.decodeMs };
-        controller.accept({
+        const segment: Segment = {
           generation,
           segmentId: `${generation}:${utterance.sequence}`,
           sequence: utterance.sequence,
@@ -301,8 +367,11 @@ async function toggle() {
           text: answer.text,
           translation: '',
           pronunciation: '',
-        });
-        publish();
+        };
+        if (controller.accept(segment)) {
+          publish();
+          submitTranslation(segment);
+        }
       },
       (message) => failSession(generation, message),
       (transcribing, dropped) => {
@@ -385,6 +454,11 @@ async function applySettings(next: UserSettings) {
   }
   userSettings = structuredClone(next);
   error = null;
+  if (previous.preferences.translation !== next.preferences.translation) {
+    await stopTranslation();
+    if (next.preferences.translation && controller.state === 'listening' && controller.segment)
+      submitTranslation(controller.segment);
+  }
   publish();
   if (!quitting && next.onboardingComplete && settingsWindow && !settingsWindow.isDestroyed())
     settingsWindow.hide();
@@ -425,6 +499,8 @@ if (hasLock)
       const loaded = await store.load();
       userSettings = loaded.settings;
       error = loaded.warning;
+      translationStatus.available = await localTranslation.available();
+      translationStatus.state = userSettings.preferences.translation ? 'idle' : 'disabled';
       try {
         userSettings.launchAtLogin = await loginEnabled();
       } catch {
@@ -602,7 +678,9 @@ app.on('before-quit', (event) => {
   pendingActivation = false;
   stopDemo?.();
   controller.stop();
-  void Promise.allSettled([capture.stop(), stopSpeech(), settingsQueue]).then(() => app.quit());
+  void Promise.allSettled([capture.stop(), stopSpeech(), stopTranslation(), settingsQueue]).then(
+    () => app.quit(),
+  );
 });
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();

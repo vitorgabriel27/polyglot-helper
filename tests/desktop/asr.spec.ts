@@ -11,7 +11,7 @@ const exec = promisify(execFile);
 test('local ASR from isolated audio reaches the notch and pauses/resumes cleanly', async () => {
   test.skip(
     process.platform !== 'linux' || process.env.HELPER_ASR_TEST !== '1',
-    'Requires prepared local ASR and PipeWire; no personal audio.',
+    'Requires prepared local ASR, translation and PipeWire; no personal audio.',
   );
   test.setTimeout(45000);
   const profile = await mkdtemp(path.join(os.tmpdir(), 'helper-asr-ui-'));
@@ -80,7 +80,28 @@ test('local ASR from isolated audio reaches the notch and pauses/resumes cleanly
     await expect(notch.locator('.original')).toContainText(/americans|country/i, {
       timeout: 20000,
     });
+    await expect(notch.locator('.translation')).toContainText(
+      /americanos|compatriotas|país|pais/i,
+      { timeout: 10000 },
+    );
+    await expect(notch.locator('.translation')).not.toContainText('▁');
     await notch.screenshot({ path: 'test-results/notch-local-asr.png' });
+    await notch.getByRole('button', { name: 'Abrir configurações' }).click();
+    const settings = app.windows().find((window) => window.url().includes('view=settings'))!;
+    await settings.getByLabel('Tradução', { exact: true }).uncheck();
+    await settings.getByRole('button', { name: 'Salvar', exact: true }).click();
+    await expect(notch.locator('.translation')).toHaveCount(0);
+    expect((await notch.evaluate(() => window.polyglotHelper.snapshot())).state).toBe('listening');
+    expect((await notch.evaluate(() => window.polyglotHelper.snapshot())).translation.state).toBe(
+      'disabled',
+    );
+    await notch.getByRole('button', { name: 'Abrir configurações' }).click();
+    await settings.getByLabel('Tradução', { exact: true }).check();
+    await settings.getByRole('button', { name: 'Salvar', exact: true }).click();
+    await expect(notch.locator('.translation')).toContainText(
+      /americanos|compatriotas|país|pais/i,
+      { timeout: 10000 },
+    );
     await notch.getByRole('button', { name: 'Pausar captura' }).click();
     await expect
       .poll(async () => (await notch.evaluate(() => window.polyglotHelper.snapshot())).state)

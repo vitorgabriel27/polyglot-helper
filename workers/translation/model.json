@@ -1,0 +1,20 @@
+{
+  "id": "translate-en_pb-1_9",
+  "source": "en",
+  "target": "pt-BR",
+  "urls": [
+    "https://data.argosopentech.com/argospm/v1/translate-en_pb-1_9.argosmodel",
+    "https://argos-net.com/v1/translate-en_pb-1_9.argosmodel"
+  ],
+  "sha256": "1d1cd5e9540c6b38c258bed002a42d3b311b8a189acb74feaa311ef30d175c5b",
+  "files": [
+    "README.md",
+    "metadata.json",
+    "sentencepiece.model",
+    "model/config.json",
+    "model/model.bin",
+    "model/shared_vocabulary.json"
+  ],
+  "license": "CC-BY-4.0 (original OPUS model, per package README)",
+  "authors": "Jörg Tiedemann and Santhosh Thottingal"
+}

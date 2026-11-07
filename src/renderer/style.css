@@ -331,3 +331,13 @@ button:disabled {
   margin-top: 6px;
   text-align: left;
 }
+
+.live-captions .translation {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.translation-pending {
+  opacity: 0.75;
+}

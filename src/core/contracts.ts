@@ -1,4 +1,5 @@
 import { isUserSettings, type Preferences, type UserSettings } from './preferences';
+import type { TranslationStatus } from './translation';
 import type { SpeechStatus } from './speech';
 import type { AudioMetrics, AudioSource } from './audio';
 export type { Preferences, UserSettings } from './preferences';
@@ -33,6 +34,7 @@ export interface Snapshot {
   error: string | null;
   metrics: AudioMetrics;
   speech: SpeechStatus;
+  translation: TranslationStatus;
 }
 export type Command =
   | { type: 'toggle-session' }

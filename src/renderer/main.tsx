@@ -232,7 +232,7 @@ function App() {
         </div>
         <p className="hint">
           {draft.sourceId
-            ? 'Reconhecimento de inglês no próprio computador. Nenhum áudio é gravado em arquivo ou enviado à nuvem. Tradução e IPA reais ainda em preparação.'
+            ? 'Reconhecimento de inglês no próprio computador. Nenhum áudio é gravado em arquivo ou enviado à nuvem. Tradução local para português disponível; IPA para áudio ainda em preparação.'
             : 'Demonstração com frases de exemplo. Modelos e APIs ainda não conectados.'}
         </p>
         {draft.sourceId && !snapshot.speech.available && (
@@ -240,6 +240,9 @@ function App() {
             O reconhecimento local ainda não foi preparado neste computador. Consulte o guia de
             instalação.
           </p>
+        )}
+        {draft.sourceId && draft.preferences.translation && !snapshot.translation.available && (
+          <p className="hint">O modelo de tradução ainda não foi preparado neste computador.</p>
         )}
         {snapshot.shortcutAvailable && (
           <p className="hint">Ctrl + Shift + Espaço · pausar ou retomar</p>
@@ -301,6 +304,16 @@ function App() {
               {snapshot.segment?.text ||
                 (snapshot.state === 'starting' ? 'Preparando reconhecimento local…' : 'Ouvindo…')}
             </p>
+            {snapshot.preferences.translation && snapshot.segment?.text && (
+              <p
+                className={`translation ${snapshot.segment.translation ? '' : 'translation-pending'}`}
+              >
+                {snapshot.segment.translation ||
+                  (snapshot.translation.state === 'error'
+                    ? 'Tradução indisponível — a transcrição continua.'
+                    : 'Traduzindo…')}
+              </p>
+            )}
             <div className="live-status">
               <meter aria-label="Nível do áudio" min={0} max={1} value={snapshot.metrics.rms} />
               <span>

@@ -28,6 +28,26 @@ export class Session {
     this.segment = segment;
     return true;
   }
+  applyTranslation(
+    identity: { generation: number; segmentId: string; revision: number; text: string },
+    translation: string,
+  ) {
+    const segment = this.segment;
+    if (
+      this.state !== 'listening' ||
+      !segment ||
+      identity.generation !== this.generation ||
+      identity.segmentId !== segment.segmentId ||
+      identity.revision !== segment.revision ||
+      identity.text !== segment.text
+    )
+      return false;
+    this.segment = { ...segment, translation };
+    return true;
+  }
+  clearTranslation() {
+    if (this.segment) this.segment = { ...this.segment, translation: '' };
+  }
   fail(generation: number) {
     if (generation !== this.generation) return false;
     this.generation += 1;
