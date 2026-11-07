@@ -1,0 +1,10 @@
+node_modules/
+dist/
+release/
+test-results/
+playwright-report/
+.asr-venv/
+.models/
+.git/
+pnpm-lock.yaml
+workers/asr/requirements.lock
