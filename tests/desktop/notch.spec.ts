@@ -371,3 +371,23 @@ test('captures current settings and notch screens for visual review', async () =
     await rm(profile, { recursive: true, force: true });
   }
 });
+
+test('captures live demonstration with original and translated caption', async () => {
+  const profile = await mkdtemp(path.join(os.tmpdir(), 'helper-caption-shot-'));
+  const app = await launch(profile);
+  try {
+    const views = await windows(app);
+    await views.settings.getByRole('button', { name: 'Salvar e continuar' }).click();
+    await views.notch.getByRole('button', { name: 'Iniciar demonstração', exact: true }).click();
+    await expect(views.notch.locator('.original')).toContainText('Take your time', {
+      timeout: 5000,
+    });
+    await expect(views.notch.locator('.translation')).toContainText('Vá com calma', {
+      timeout: 5000,
+    });
+    await views.notch.screenshot({ path: path.resolve('test-results/polyglot-caption-live.png') });
+  } finally {
+    await app.close();
+    await rm(profile, { recursive: true, force: true });
+  }
+});
