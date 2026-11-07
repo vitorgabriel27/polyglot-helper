@@ -1,4 +1,5 @@
 import type { Command, Snapshot } from '../core/contracts';
+import { useState } from 'react';
 export function NotchView({
   snapshot,
   command,
@@ -11,6 +12,12 @@ export function NotchView({
   const active = snapshot.state === 'listening';
   const busy = active || snapshot.state === 'starting';
   const isAudio = snapshot.mode === 'local-audio';
+  const [expanded, setExpanded] = useState(false);
+  const current = snapshot.segment;
+  const history = current
+    ? snapshot.recentSegments.filter((item) => item.segmentId !== current.segmentId)
+    : snapshot.recentSegments;
+  const previous = history.at(-1);
   const transportLabel = busy
     ? isAudio
       ? 'Pausar captura'
@@ -20,12 +27,18 @@ export function NotchView({
       : 'Iniciar demonstração';
   return (
     <section
-      className={`notch ${busy || snapshot.state === 'error' ? 'active' : ''} ${snapshot.preferences.fontSize}`}
+      onMouseEnter={() => setExpanded(true)}
+      onMouseLeave={() => setExpanded(false)}
+      onFocus={() => setExpanded(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setExpanded(false);
+      }}
+      className={`notch ${busy || snapshot.state === 'error' ? 'active' : ''} ${expanded ? 'expanded' : ''} ${snapshot.preferences.fontSize}`}
       aria-label="PolyglotHelper"
     >
       <div className="notch-bar">
-        <span className="grip" aria-hidden="true">
-          ⠿
+        <span className="source-icon" aria-hidden="true">
+          {isAudio ? '♫' : '◉'}
         </span>
         <button
           className="identity"
@@ -55,10 +68,12 @@ export function NotchView({
       {busy &&
         (isAudio ? (
           <div className="captions live-captions" aria-live="polite" aria-atomic="true">
-            <p className="original">
+            {expanded && previous && <p className="context-line previous-line">{previous.text}</p>}
+            <p className="original current-line">
               {snapshot.segment?.text ||
                 (snapshot.state === 'starting' ? 'Preparando reconhecimento local…' : 'Ouvindo…')}
             </p>
+            {expanded && <p className="context-line next-line">Próximo trecho aparecerá aqui</p>}
             {snapshot.preferences.translation && snapshot.segment?.text && (
               <p
                 className={`translation ${snapshot.segment.translation ? '' : 'translation-pending'}`}
@@ -84,7 +99,9 @@ export function NotchView({
           </div>
         ) : (
           <div className="captions" aria-live="polite" aria-atomic="true">
+            {expanded && previous && <p className="context-line previous-line">{previous.text}</p>}
             <p className="original">{snapshot.segment?.text || 'Preparando demonstração…'}</p>
+            {expanded && <p className="context-line next-line">Próximo trecho aparecerá aqui</p>}
             {snapshot.preferences.translation && (
               <p className="translation">{snapshot.segment?.translation || '…'}</p>
             )}

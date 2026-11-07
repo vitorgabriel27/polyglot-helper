@@ -187,6 +187,7 @@ Tradução local inicial implementada e validada na notch: original imediato, po
 - [ ] **NEXT-07 · P1** Histórico de traduções navegável para trás e para frente. Definir retenção, limite e limpeza; distinguir histórico da legenda ao vivo. Persistência de transcrições deve ser uma escolha explícita do usuário.
 - [ ] **NEXT-08 · P1** Adicionar italiano, francês e alemão para testes. Definir direção dos pares, selecionar modelos/licenças, atualizar configurações e medir ASR/tradução por idioma com referências.
 - [ ] **NEXT-09 · P2** Modelar modo tutor: usuário fala e o app responde e corrige pronúncia, gramática e concordância. Definir turnos, critérios de avaliação, feedback e integração com o harness antes de implementar.
+- [ ] **NEXT-10 · P1** Redesenho inicial implementado: cápsula preta, expansão por hover/foco, segmento anterior/atual e tradução opcional. Restam revisão visual de todos os estados e validação Windows/compositores; sincronização por palavra depende de timestamps. Detalhes e evidências em [REDESIGN-NOTCH.md](design/REDESIGN-NOTCH.md).
 
 As três propostas acima foram incorporadas do arquivo temporário `new_features`, removido após a consolidação. Permanecem fora do aceite do piloto mínimo.
 

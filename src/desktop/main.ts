@@ -119,6 +119,7 @@ function snapshot(): Snapshot {
     state: controller.state,
     generation: controller.generation,
     segment: controller.segment,
+    recentSegments: controller.recentSegments,
     preferences: userSettings.preferences,
     settings: userSettings,
     platform: process.platform,

@@ -21,6 +21,7 @@ export interface Snapshot {
   state: SessionState;
   generation: number;
   segment: Segment | null;
+  recentSegments: Segment[];
   preferences: Preferences;
   settings: UserSettings;
   platform: string;

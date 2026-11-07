@@ -5,11 +5,13 @@ export class Session {
   state: SessionState = 'idle';
   generation = 0;
   segment: Segment | null = null;
+  recentSegments: Segment[] = [];
 
   start() {
     this.generation += 1;
     this.state = 'starting';
     this.segment = null;
+    this.recentSegments = [];
     return this.generation;
   }
   ready(generation: number) {
@@ -26,6 +28,12 @@ export class Session {
     )
       return false;
     this.segment = segment;
+    if (segment.isFinal) {
+      const index = this.recentSegments.findIndex((item) => item.segmentId === segment.segmentId);
+      if (index >= 0) this.recentSegments[index] = segment;
+      else this.recentSegments.push(segment);
+      this.recentSegments = this.recentSegments.slice(-3);
+    }
     return true;
   }
   applyTranslation(
@@ -43,6 +51,8 @@ export class Session {
     )
       return false;
     this.segment = { ...segment, translation };
+    const index = this.recentSegments.findIndex((item) => item.segmentId === segment.segmentId);
+    if (index >= 0) this.recentSegments[index] = this.segment;
     return true;
   }
   clearTranslation() {
@@ -52,18 +62,21 @@ export class Session {
     if (generation !== this.generation) return false;
     this.generation += 1;
     this.segment = null;
+    this.recentSegments = [];
     this.state = 'error';
     return true;
   }
   pause() {
     this.generation += 1;
     this.segment = null;
+    this.recentSegments = [];
     this.state = 'paused';
   }
   stop() {
     this.state = 'stopping';
     this.generation += 1;
     this.segment = null;
+    this.recentSegments = [];
     this.state = 'idle';
   }
 }

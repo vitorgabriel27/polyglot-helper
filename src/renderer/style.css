@@ -45,16 +45,25 @@ p {
   border-radius: 20px;
 }
 .notch {
-  background: #141916;
-  border: 1px solid #363f39;
-  border-radius: 21px;
+  background: #050505;
+  border: 1px solid #252525;
+  border-radius: 28px;
   margin: 3px 4px;
   padding: 8px 14px;
   min-height: 52px;
 }
 .notch.active {
-  border-radius: 20px;
+  border-radius: 26px;
   padding-bottom: 12px;
+}
+.notch.expanded {
+  box-shadow: 0 10px 36px #0009;
+}
+.source-icon {
+  color: #9ca3a0;
+  width: 20px;
+  text-align: center;
+  font-size: 17px;
 }
 .notch-bar {
   display: flex;
@@ -101,6 +110,26 @@ p {
 .captions {
   padding: 4px 7px 0;
   text-align: center;
+}
+.context-line {
+  color: #858987;
+  font-size: 14px;
+  line-height: 1.35;
+  margin: 4px 0;
+}
+.current-line {
+  color: #f7f8f7;
+  font-weight: 650;
+}
+.next-line {
+  opacity: 0.75;
+}
+.expanded .captions {
+  padding-top: 9px;
+}
+.expanded .translation {
+  color: #a9cdb5;
+  font-size: 12px;
 }
 .original {
   font-size: 17px;
