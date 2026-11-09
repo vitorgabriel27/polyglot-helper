@@ -22,7 +22,11 @@ import {
   type SpeechStatus,
 } from '../core/speech';
 import { LocalSpeech } from '../adapters/speech/local';
-import { TranslationPipeline, type TranslationStatus } from '../core/translation';
+import {
+  TranslationPipeline,
+  type TranslationHandle,
+  type TranslationStatus,
+} from '../core/translation';
 import { LocalTranslation } from '../adapters/translation/local';
 import { Session } from '../core/session';
 import { CaptureManager, emptyMetrics, type AudioSource } from '../core/audio';
@@ -62,6 +66,9 @@ const capture = new CaptureManager(audio);
 const localSpeech = new LocalSpeech(app.getAppPath());
 const localTranslation = new LocalTranslation(app.getAppPath());
 let translationPipeline: TranslationPipeline | undefined;
+let wordLookupHandle: TranslationHandle | undefined;
+let wordLookupAbort: AbortController | undefined;
+let wordLookupQueue: Promise<void> = Promise.resolve();
 let translationDraining: Promise<void> = Promise.resolve();
 let translationStatus: TranslationStatus = {
   available: false,
@@ -102,6 +109,8 @@ let tray: Tray | undefined;
 let stopDemo: (() => void) | undefined;
 let shortcutAvailable = false;
 let notchHeight = 62;
+let popoverPlacement: 'above' | 'below' = 'below';
+let notchBaseHeight = 62;
 let metrics = emptyMetrics();
 let sources: AudioSource[] = [];
 let sourcesLoading = false;
@@ -144,7 +153,15 @@ function snapshot(): Snapshot {
 }
 function position(recenter = false) {
   positionWindows(
-    { notch, settingsWindow, quitting, notchHeight, state: controller.state },
+    {
+      notch,
+      settingsWindow,
+      quitting,
+      notchHeight,
+      notchBaseHeight,
+      state: controller.state,
+      popoverPlacement,
+    },
     recenter,
   );
 }
@@ -251,6 +268,34 @@ async function stopTranslation() {
     translationDraining = translationDraining.then(() => stopped);
   }
   await translationDraining;
+}
+function lookupWord(word: string): Promise<string> {
+  let resolveResult!: (value: string) => void;
+  let rejectResult!: (cause: Error) => void;
+  const result = new Promise<string>((resolve, reject) => {
+    resolveResult = resolve;
+    rejectResult = reject;
+  });
+  wordLookupQueue = wordLookupQueue.then(async () => {
+    try {
+      if (!wordLookupHandle) {
+        wordLookupAbort = new AbortController();
+        wordLookupHandle = await localTranslation.start(wordLookupAbort.signal);
+      }
+      const translated = await wordLookupHandle.translate(word);
+      resolveResult(translated.text);
+    } catch (cause) {
+      rejectResult(cause instanceof Error ? cause : new Error('Falha ao consultar a palavra.'));
+    }
+  });
+  return result;
+}
+async function stopWordLookup() {
+  wordLookupAbort?.abort();
+  await wordLookupQueue;
+  await wordLookupHandle?.stop();
+  wordLookupHandle = undefined;
+  wordLookupAbort = undefined;
 }
 async function stopSpeech() {
   captionPipeline?.stop();
@@ -572,8 +617,18 @@ if (hasLock)
             break;
           case 'fit-notch':
             notchHeight = command.height;
+            notchBaseHeight = command.height;
+            popoverPlacement = 'below';
             position();
             break;
+          case 'fit-notch-popover':
+            notchHeight = command.height;
+            notchBaseHeight = command.baseHeight;
+            popoverPlacement = command.placement;
+            position();
+            break;
+          case 'lookup-word':
+            return lookupWord(command.word);
           case 'configure':
             settingsQueue = settingsQueue.catch(() => {}).then(() => configure(command.value));
             await settingsQueue;
@@ -641,9 +696,13 @@ app.on('before-quit', (event) => {
   pendingActivation = false;
   stopDemo?.();
   controller.stop();
-  void Promise.allSettled([capture.stop(), stopSpeech(), stopTranslation(), settingsQueue]).then(
-    () => app.quit(),
-  );
+  void Promise.allSettled([
+    capture.stop(),
+    stopSpeech(),
+    stopTranslation(),
+    stopWordLookup(),
+    settingsQueue,
+  ]).then(() => app.quit());
 });
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();

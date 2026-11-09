@@ -1,17 +1,22 @@
 import { screen, type BrowserWindow } from 'electron';
+let appliedPopoverOffset = 0;
 export function positionWindows(
   {
     notch,
     settingsWindow,
     quitting,
     notchHeight,
+    notchBaseHeight,
     state,
+    popoverPlacement,
   }: {
     notch: BrowserWindow;
     settingsWindow: BrowserWindow;
     quitting: boolean;
     notchHeight: number;
+    notchBaseHeight: number;
     state: string;
+    popoverPlacement: 'above' | 'below';
   },
   recenter = false,
 ) {
@@ -22,11 +27,15 @@ export function positionWindows(
   const width = Math.min(expanded ? 560 : 300, area.width);
   const center = recenter ? area.x + area.width / 2 : old.x + old.width / 2;
   const x = Math.max(area.x, Math.min(Math.round(center - width / 2), area.x + area.width - width));
-  const y = recenter
-    ? area.y + 10
-    : Math.max(area.y, Math.min(old.y, area.y + area.height - notchHeight));
+  const targetPopoverOffset = popoverPlacement === 'above' ? notchHeight - notchBaseHeight : 0;
+  const anchorY = recenter ? area.y + 10 : old.y + appliedPopoverOffset;
+  const y = Math.max(
+    area.y,
+    Math.min(anchorY - targetPopoverOffset, area.y + area.height - notchHeight),
+  );
   if (old.width !== width || old.height !== notchHeight || recenter)
     notch.setBounds({ width, height: notchHeight, x, y });
+  appliedPopoverOffset = targetPopoverOffset;
   const panelWidth = Math.min(400, area.width);
   const panelHeight = Math.min(620, area.height - 16);
   const panel = {

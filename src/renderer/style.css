@@ -11,6 +11,7 @@
 body {
   margin: 0;
   background: transparent;
+  overflow: hidden;
 }
 button,
 select,
@@ -51,6 +52,7 @@ p {
   margin: 3px 4px;
   padding: 8px 14px;
   min-height: 52px;
+  overflow: visible;
 }
 .notch.active {
   border-radius: 26px;
@@ -126,6 +128,74 @@ p {
 }
 .expanded .captions {
   padding-top: 9px;
+}
+.notch.expanded {
+  overflow: visible;
+  position: relative;
+}
+.history-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto 5px;
+  color: #a9baae;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.history-nav button {
+  padding: 0 8px;
+  border: 0;
+  background: #171a18;
+  font-size: 17px;
+  line-height: 20px;
+}
+.word {
+  cursor: help;
+  border-radius: 3px;
+}
+.word:hover,
+.word:focus {
+  background: #26352b;
+  outline: none;
+}
+.word-popover {
+  position: fixed;
+  z-index: 2147483647;
+  max-height: none;
+  overflow: visible;
+  white-space: normal;
+  color: #d4e4d9;
+  background: #202522f2;
+  backdrop-filter: blur(12px);
+  border: 1px solid #52635a;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+  box-shadow: 0 10px 30px #000b;
+  pointer-events: none;
+}
+.word-popover > strong {
+  display: block;
+  color: #f5f7f5;
+  font-size: 15px;
+  line-height: 1.25;
+  margin-bottom: 7px;
+}
+.popover-row {
+  display: block;
+  margin-top: 5px;
+}
+.popover-row > strong {
+  color: #f0f3f1;
+  font-weight: 650;
+  margin-right: 5px;
+}
+.popover-row > span {
+  color: #c7d0ca;
+  overflow-wrap: anywhere;
 }
 .expanded .translation {
   color: #a9cdb5;

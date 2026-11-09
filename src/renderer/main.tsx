@@ -56,7 +56,10 @@ function App() {
     const observer = new ResizeObserver(() => {
       const height = Math.max(
         50,
-        Math.min(300, Math.ceil(surface.getBoundingClientRect().height + 6)),
+        Math.min(
+          window.screen.availHeight - 8,
+          Math.ceil(surface.getBoundingClientRect().height + 6),
+        ),
       );
       void api
         .command({ type: 'fit-notch', height })

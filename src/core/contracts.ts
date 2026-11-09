@@ -72,22 +72,52 @@ export type Command =
   | { type: 'refresh-sources' }
   | { type: 'quit' }
   | { type: 'configure'; value: UserSettings }
-  | { type: 'fit-notch'; height: number };
+  | { type: 'fit-notch'; height: number }
+  | { type: 'lookup-word'; word: string }
+  | {
+      type: 'fit-notch-popover';
+      height: number;
+      baseHeight: number;
+      placement: 'above' | 'below';
+    };
 export interface DesktopAPI {
   snapshot(): Promise<Snapshot>;
-  command(command: Command): Promise<void>;
+  command(command: Command): Promise<unknown>;
   subscribe(listener: (state: Snapshot) => void): () => void;
 }
 export function isCommand(value: unknown): value is Command {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const command = value as Record<string, unknown>;
+  if (command.type === 'lookup-word') {
+    return (
+      Object.keys(command).length === 2 &&
+      typeof command.word === 'string' &&
+      command.word.length > 0 &&
+      command.word.length <= 64 &&
+      /^[\p{L}'-]+$/u.test(command.word)
+    );
+  }
   if (command.type === 'fit-notch') {
     return (
       Object.keys(command).length === 2 &&
       typeof command.height === 'number' &&
       Number.isInteger(command.height) &&
       command.height >= 50 &&
-      command.height <= 300
+      command.height <= 4096
+    );
+  }
+  if (command.type === 'fit-notch-popover') {
+    return (
+      Object.keys(command).length === 4 &&
+      typeof command.height === 'number' &&
+      Number.isInteger(command.height) &&
+      command.height >= 50 &&
+      command.height <= 4096 &&
+      typeof command.baseHeight === 'number' &&
+      Number.isInteger(command.baseHeight) &&
+      command.baseHeight >= 50 &&
+      command.baseHeight <= command.height &&
+      (command.placement === 'above' || command.placement === 'below')
     );
   }
   if (Object.keys(command).some((key) => !['type', 'value'].includes(key))) return false;

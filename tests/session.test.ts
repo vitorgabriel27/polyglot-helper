@@ -15,6 +15,38 @@ const segment = (generation: number, revision = 1): Segment => ({
   isFinal: false,
 });
 describe('simulation lifecycle', () => {
+  it('keeps a bounded final-segment history with timestamps and later translations', () => {
+    const session = new Session();
+    const generation = session.start();
+    session.ready(generation);
+    for (let sequence = 0; sequence < 105; sequence++) {
+      expect(
+        session.accept({
+          ...segment(generation),
+          segmentId: `segment-${sequence}`,
+          sequence,
+          startMs: sequence * 1000,
+          endMs: (sequence + 1) * 1000,
+          isFinal: true,
+        }),
+      ).toBe(true);
+    }
+    expect(session.recentSegments).toHaveLength(100);
+    expect(session.recentSegments[0].startMs).toBe(5000);
+    const last = session.recentSegments.at(-1)!;
+    expect(
+      session.applyTranslation(
+        {
+          generation,
+          segmentId: last.segmentId,
+          revision: last.revision,
+          text: last.text,
+        },
+        'Translated',
+      ),
+    ).toBe(true);
+    expect(session.recentSegments.at(-1)?.translation).toBe('Translated');
+  });
   it('rejects an old provider after pause and restart', () => {
     const session = new Session();
     const old = session.start();

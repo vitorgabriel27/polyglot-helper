@@ -42,7 +42,8 @@ export class Session {
       const index = this.recentSegments.findIndex((item) => item.segmentId === segment.segmentId);
       if (index >= 0) this.recentSegments[index] = segment;
       else this.recentSegments.push(segment);
-      this.recentSegments = this.recentSegments.slice(-3);
+      // Keep a bounded, session-only history for navigating translated captions.
+      this.recentSegments = this.recentSegments.slice(-100);
     }
     return true;
   }
