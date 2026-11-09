@@ -12,6 +12,7 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
+    "postinstall": "node scripts/fix-electron-sandbox.mjs",
     "start": "node scripts/launch.mjs",
     "dev": "pnpm build && pnpm start",
     "dev:x11": "pnpm build && node scripts/launch.mjs --x11",

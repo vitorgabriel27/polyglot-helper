@@ -1,6 +1,25 @@
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
+import { existsSync, statSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 const require = createRequire(import.meta.url);
+
+if (process.platform === 'linux') {
+  const electronDirectory = dirname(require.resolve('electron/package.json'));
+  const sandboxPath = join(electronDirectory, 'dist', 'chrome-sandbox');
+  if (existsSync(sandboxPath)) {
+    const sandbox = statSync(sandboxPath);
+    if (sandbox.uid !== 0 || (sandbox.mode & 0o7777) !== 0o4755) {
+      console.error(
+        `O helper de sandbox do Electron está mal configurado: ${sandboxPath}\n` +
+          `Execute: sudo chown root:root '${sandboxPath}' && sudo chmod 4755 '${sandboxPath}'\n` +
+          'Depois, reinstale as dependências com pnpm install para aplicar a correção automaticamente.',
+      );
+      process.exit(1);
+    }
+  }
+}
+
 const requested = process.argv.slice(2);
 const flags = [];
 if (process.platform === 'linux') {
