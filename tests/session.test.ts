@@ -120,7 +120,13 @@ describe('IPC command boundary', () => {
         type: 'configure',
         value: {
           ...defaults(),
-          preferences: { translation: true, pronunciation: false, fontSize: 'large' },
+          preferences: {
+            translation: true,
+            pronunciation: false,
+            fontSize: 'large',
+            sourceLanguage: 'en-US',
+            targetLanguage: 'pt-BR',
+          },
         },
       }),
     ).toBe(true);

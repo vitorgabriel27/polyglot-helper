@@ -1,4 +1,5 @@
 import type { Command, Snapshot, UserSettings } from '../core/contracts';
+import { LANGUAGES, type LanguageCode } from '../core/preferences';
 import { useCallback, useEffect, useRef, useState } from 'react';
 export function SettingsView({
   snapshot,
@@ -42,6 +43,12 @@ export function SettingsView({
   const missingSource =
     draft.sourceId !== null &&
     !snapshot.audioSources.some((source) => source.id === draft.sourceId);
+  const modelSetup = snapshot.modelSetup ?? {
+    state: 'idle' as const,
+    stage: null,
+    progress: null,
+    error: null,
+  };
   return (
     <div className="settings-shell">
       <section
@@ -67,10 +74,64 @@ export function SettingsView({
             ? 'Preferências salvas neste computador.'
             : 'Escolha uma vez. Você pode mudar depois.'}
         </p>
-        <div className="field">
-          <span>Idioma</span>
-          <strong>Inglês → Português</strong>
-        </div>
+        <label className="field">
+          <span>Idioma de entrada</span>
+          <select
+            value={draft.preferences.sourceLanguage}
+            onChange={(event) =>
+              setDraft({
+                ...draft,
+                preferences: {
+                  ...draft.preferences,
+                  sourceLanguage: event.target.value as LanguageCode,
+                },
+              })
+            }
+          >
+            {Object.entries(LANGUAGES).map(([code, name]) => (
+              <option key={code} value={code}>
+                {code === 'zh-CN' ? 'Chinês simplificado (mandarim)' : name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>Idioma de saída</span>
+          <select
+            value={draft.preferences.targetLanguage}
+            onChange={(event) =>
+              setDraft({
+                ...draft,
+                preferences: {
+                  ...draft.preferences,
+                  targetLanguage: event.target.value as LanguageCode,
+                },
+              })
+            }
+          >
+            {Object.entries(LANGUAGES).map(([code, name]) => (
+              <option key={code} value={code} disabled={code === draft.preferences.sourceLanguage}>
+                {code === 'zh-CN' ? 'Chinês simplificado (mandarim)' : name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <p className="hint">
+          Ao salvar, o app baixa o reconhecimento da língua de entrada e os modelos de tradução para
+          o par escolhido. Tradução entre línguas sem pacote direto usa inglês como ponte. Os hashes
+          são calculados no download para conferência local.
+        </p>
+        {modelSetup.state === 'downloading' && (
+          <p className="hint" role="status">
+            Baixando modelo de {modelSetup.stage === 'asr' ? 'reconhecimento' : 'tradução'}…
+            {modelSetup.progress !== null ? ` ${Math.round(modelSetup.progress * 100)}%` : ''}
+          </p>
+        )}
+        {modelSetup.state === 'error' && modelSetup.error && (
+          <p className="hint" role="alert">
+            {modelSetup.error}
+          </p>
+        )}
         <label className="source-field">
           <span>Fonte de áudio</span>
           <select
@@ -181,7 +242,7 @@ export function SettingsView({
         </div>
         <p className="hint">
           {draft.sourceId
-            ? 'Reconhecimento de inglês no próprio computador. Nenhum áudio é gravado em arquivo ou enviado à nuvem. Tradução local para português disponível; IPA para áudio ainda em preparação.'
+            ? `Reconhecimento local: ${LANGUAGES[draft.preferences.sourceLanguage]}. Nenhum áudio é gravado em arquivo ou enviado à nuvem. Tradução: ${LANGUAGES[draft.preferences.sourceLanguage]} → ${LANGUAGES[draft.preferences.targetLanguage]}; modelos adicionais estão em preparação. IPA para áudio ainda em preparação.`
             : 'Demonstração com frases de exemplo. Modelos e APIs ainda não conectados.'}
         </p>
         {draft.sourceId && !snapshot.speech.available && (

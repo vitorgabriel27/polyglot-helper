@@ -2,6 +2,20 @@ export interface Preferences {
   translation: boolean;
   pronunciation: boolean;
   fontSize: 'normal' | 'large';
+  sourceLanguage: LanguageCode;
+  targetLanguage: LanguageCode;
+}
+export const LANGUAGES = {
+  'en-US': 'Inglês (EUA)',
+  'pt-BR': 'Português (Brasil)',
+  it: 'Italiano',
+  fr: 'Francês',
+  de: 'Alemão',
+  'zh-CN': 'Mandarim (simplificado)',
+} as const;
+export type LanguageCode = keyof typeof LANGUAGES;
+export function isLanguageCode(value: unknown): value is LanguageCode {
+  return typeof value === 'string' && value in LANGUAGES;
 }
 export interface UserSettings {
   version: 1;
@@ -16,17 +30,26 @@ export function defaults(): UserSettings {
     onboardingComplete: false,
     sourceId: null,
     launchAtLogin: false,
-    preferences: { translation: true, pronunciation: false, fontSize: 'normal' },
+    preferences: {
+      translation: true,
+      pronunciation: false,
+      fontSize: 'normal',
+      sourceLanguage: 'en-US',
+      targetLanguage: 'pt-BR',
+    },
   };
 }
 export function isPreferences(value: unknown): value is Preferences {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const p = value as Record<string, unknown>;
   return (
-    Object.keys(p).length === 3 &&
+    Object.keys(p).length === 5 &&
     typeof p.translation === 'boolean' &&
     typeof p.pronunciation === 'boolean' &&
-    (p.fontSize === 'normal' || p.fontSize === 'large')
+    (p.fontSize === 'normal' || p.fontSize === 'large') &&
+    isLanguageCode(p.sourceLanguage) &&
+    isLanguageCode(p.targetLanguage) &&
+    p.sourceLanguage !== p.targetLanguage
   );
 }
 export function isSourceId(value: unknown): value is string | null {

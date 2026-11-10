@@ -5,7 +5,10 @@ import type { TranslationHandle, TranslationResult } from '../../core/translatio
 import type { TranslationProvider } from '../../core/contracts';
 
 export class LocalTranslation implements TranslationProvider {
-  constructor(private root: string) {}
+  constructor(
+    private root: string,
+    private modelIds = ['translate-en_pb-1_9'],
+  ) {}
   get python() {
     return path.join(
       this.root,
@@ -14,12 +17,15 @@ export class LocalTranslation implements TranslationProvider {
     );
   }
   async available() {
+    if (!this.modelIds.length) return false;
     try {
       await Promise.all(
         [
           this.python,
-          path.join(this.root, '.models/translate-en_pb-1_9/model/model.bin'),
-          path.join(this.root, '.models/translate-en_pb-1_9/sentencepiece.model'),
+          ...this.modelIds.flatMap((id) => [
+            path.join(this.root, '.models', id, 'model/model.bin'),
+            path.join(this.root, '.models', id, 'sentencepiece.model'),
+          ]),
         ].map((file) => access(file)),
       );
       return true;
@@ -46,6 +52,7 @@ export class LocalTranslation implements TranslationProvider {
         windowsHide: true,
         env: {
           ...process.env,
+          HELPER_TRANSLATION_MODELS: JSON.stringify(this.modelIds),
           HF_HUB_OFFLINE: '1',
           HF_HUB_DISABLE_TELEMETRY: '1',
           TRANSFORMERS_OFFLINE: '1',
@@ -122,7 +129,7 @@ export class LocalTranslation implements TranslationProvider {
         buffer = buffer.slice(newline + 1);
         try {
           const message = JSON.parse(line);
-          if (message.type === 'ready' && message.model === 'translate-en_pb-1_9') {
+          if (message.type === 'ready' && message.model === this.modelIds.join('+')) {
             clearTimeout(bootTimeout);
             booted = true;
             resolveReady();

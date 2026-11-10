@@ -17,14 +17,21 @@ def main():
     try:
         import ctranslate2
         import sentencepiece
-        directory = Path(__file__).resolve().parents[2] / '.models' / 'translate-en_pb-1_9'
-        tokenizer = sentencepiece.SentencePieceProcessor(model_file=str(directory / 'sentencepiece.model'))
-        model = ctranslate2.Translator(str(directory / 'model'), device='cpu', compute_type='int8',
-                                      intra_threads=2, inter_threads=1)
+        root = Path(__file__).resolve().parents[2] / '.models'
+        model_ids = json.loads(os.environ.get('HELPER_TRANSLATION_MODELS', '["translate-en_pb-1_9"]'))
+        if not isinstance(model_ids, list) or not model_ids or any(not isinstance(item, str) or '/' in item or '\\' in item for item in model_ids):
+            raise ValueError('models')
+        models = []
+        for model_id in model_ids:
+            directory = root / model_id
+            tokenizer = sentencepiece.SentencePieceProcessor(model_file=str(directory / 'sentencepiece.model'))
+            model = ctranslate2.Translator(str(directory / 'model'), device='cpu', compute_type='int8',
+                                          intra_threads=2, inter_threads=1)
+            models.append((model_id, tokenizer, model))
     except Exception:
         emit({'type': 'fatal', 'code': 'load_failed'})
         return
-    emit({'type': 'ready', 'model': 'translate-en_pb-1_9'})
+    emit({'type': 'ready', 'model': '+'.join(item[0] for item in models)})
     while True:
         line = sys.stdin.buffer.readline(30001)
         if not line:
@@ -42,12 +49,13 @@ def main():
             if not isinstance(text, str) or not 0 < len(text) <= 4096:
                 raise ValueError('text')
             started = time.monotonic()
-            tokens = tokenizer.encode(text, out_type=str)
-            # Caption windows are short; bounded chunks also handle unexpected long ASR outputs.
-            batches = [tokens[index:index + 128] for index in range(0, len(tokens), 128)]
-            results = model.translate_batch(batches, beam_size=2, replace_unknowns=True,
-                                            max_input_length=128, max_decoding_length=256)
-            translated = ' '.join(tokenizer.decode(item.hypotheses[0]).replace('▁', ' ').strip() for item in results).strip()
+            translated = text
+            for _, tokenizer, model in models:
+                tokens = tokenizer.encode(translated, out_type=str)
+                batches = [tokens[index:index + 128] for index in range(0, len(tokens), 128)]
+                results = model.translate_batch(batches, beam_size=2, replace_unknowns=True,
+                                                max_input_length=128, max_decoding_length=256)
+                translated = ' '.join(tokenizer.decode(item.hypotheses[0]).replace('▁', ' ').strip() for item in results).strip()
             if len(translated) > 8192:
                 raise ValueError('output')
             emit({'type': 'result', 'id': request_id, 'text': translated,

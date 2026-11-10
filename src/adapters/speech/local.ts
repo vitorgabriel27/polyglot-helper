@@ -5,7 +5,14 @@ import type { SpeechProvider } from '../../core/contracts';
 import type { SpeechHandle, SpeechResult } from '../../core/speech';
 
 export class LocalSpeech implements SpeechProvider {
-  constructor(private root: string) {}
+  constructor(
+    private root: string,
+    private model = 'base.en',
+    private language = 'en',
+  ) {}
+  private get modelDirectory() {
+    return this.model === 'base.en' ? '.models/base.en' : `.models/${this.model}`;
+  }
   get python() {
     return path.join(
       this.root,
@@ -18,8 +25,8 @@ export class LocalSpeech implements SpeechProvider {
       await Promise.all(
         [
           this.python,
-          path.join(this.root, '.models/base.en/model.bin'),
-          path.join(this.root, '.models/base.en/tokenizer.json'),
+          path.join(this.root, this.modelDirectory, 'model.bin'),
+          path.join(this.root, this.modelDirectory, 'tokenizer.json'),
         ].map((file) => access(file)),
       );
       return true;
@@ -40,6 +47,8 @@ export class LocalSpeech implements SpeechProvider {
       windowsHide: true,
       env: {
         ...process.env,
+        HELPER_ASR_MODEL: this.model === 'base.en' ? 'base.en' : this.model,
+        HELPER_ASR_LANGUAGE: this.language,
         HF_HUB_OFFLINE: '1',
         HF_HUB_DISABLE_TELEMETRY: '1',
         TRANSFORMERS_OFFLINE: '1',
@@ -115,7 +124,11 @@ export class LocalSpeech implements SpeechProvider {
         buffer = buffer.slice(newline + 1);
         try {
           const message = JSON.parse(line);
-          if (message.type === 'ready' && message.model === 'base.en' && message.device === 'cpu') {
+          if (
+            message.type === 'ready' &&
+            message.model === this.model &&
+            message.device === 'cpu'
+          ) {
             clearTimeout(bootTimeout);
             booted = true;
             resolveReady();

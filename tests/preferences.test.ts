@@ -16,7 +16,13 @@ describe('first run and persistence', () => {
         ...defaults(),
         onboardingComplete: true,
         sourceId: 'pipewire:stable-source',
-        preferences: { translation: false, pronunciation: true, fontSize: 'large' as const },
+        preferences: {
+          translation: false,
+          pronunciation: true,
+          fontSize: 'large' as const,
+          sourceLanguage: 'zh-CN' as const,
+          targetLanguage: 'en-US' as const,
+        },
       };
       await store.save(settings);
       expect((await new SettingsStore(dir).load()).settings).toEqual(settings);

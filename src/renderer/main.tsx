@@ -79,6 +79,7 @@ function App() {
     setError('');
     try {
       await api.command({ type: 'configure', value: { ...draft, onboardingComplete: true } });
+      setError('');
     } catch (cause) {
       setError(
         cause instanceof Error

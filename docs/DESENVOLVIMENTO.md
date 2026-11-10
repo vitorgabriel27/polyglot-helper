@@ -27,7 +27,11 @@ Para captura local Linux: PipeWire e WirePlumber ativos, comandos `pw-dump` e `p
 4. Clicar ▶ para iniciar a demonstração ou a captura escolhida. Captura não começa só porque o app abriu no login.
 5. Clique no nome da notch para alterar preferências; use Salvar para aplicar. Trocar fonte interrompe a captura atual.
 
-A captura local Linux agora pode gerar **transcrição real em inglês**, com reconhecimento local base.en/CPU. A tradução local em português aparece abaixo do original quando a opção Tradução está ativa. IPA para áudio e harness de pesquisa ainda não conectados. Nenhum áudio é gravado em arquivo ou enviado à nuvem.
+A captura local Linux agora pode gerar transcrição com ASR Whisper local. O baseline inglês usa `base.en`; outros idiomas do seletor usam o Whisper base multilíngue após download. IPA para áudio e harness de pesquisa ainda não conectados. Nenhum áudio é gravado em arquivo ou enviado à nuvem.
+
+As configurações permitem selecionar idioma de entrada e saída entre inglês (EUA), português (Brasil), italiano, francês, alemão e chinês simplificado (mandarim), em qualquer direção distinta. Os modelos são preparados ao salvar; tradução entre idiomas sem pacote direto usa inglês como ponte. Não há fallback de ASR nem envio à nuvem.
+
+Ao clicar Salvar, o app baixa os modelos que faltarem para o par selecionado: faster-whisper multilingual base para italiano, francês, alemão, português ou chinês simplificado; `base.en` para inglês; e pacotes Argos de tradução nos sentidos necessários. Quando não há pacote direto entre dois idiomas, usa inglês como ponte. Requer conexão com Hugging Face e Argos. A extração depende de `.asr-venv`, criado por `pnpm setup:translation`. Cada artefato baixa para `.models` e recebe um manifesto local com URL/revisão e SHA-256 calculado após o download. Esse hash detecta alterações posteriores, mas não autentica o fornecedor no download inicial. Se setup, download ou extração falhar, as preferências novas não são salvas. Os idiomas adicionais ainda precisam de avaliação de qualidade/recursos; Windows continua sem validação nativa.
 
 Antes do primeiro uso de transcrição, instale uv e prepare o ambiente/modelo:
 

@@ -28,6 +28,7 @@ import {
   type TranslationStatus,
 } from '../core/translation';
 import { LocalTranslation } from '../adapters/translation/local';
+import { ModelManager } from '../adapters/models/manager';
 import { Session } from '../core/session';
 import { CaptureManager, emptyMetrics, type AudioSource } from '../core/audio';
 import { defaults } from '../core/preferences';
@@ -63,8 +64,9 @@ if (!hasLock) app.quit();
 const controller = new Session();
 const audio = platformAudio();
 const capture = new CaptureManager(audio);
-const localSpeech = new LocalSpeech(app.getAppPath());
-const localTranslation = new LocalTranslation(app.getAppPath());
+let localSpeech = new LocalSpeech(app.getAppPath());
+let localTranslation = new LocalTranslation(app.getAppPath());
+const modelManager = new ModelManager(app.getAppPath());
 let translationPipeline: TranslationPipeline | undefined;
 let wordLookupHandle: TranslationHandle | undefined;
 let wordLookupAbort: AbortController | undefined;
@@ -75,6 +77,12 @@ let translationStatus: TranslationStatus = {
   state: 'idle',
   error: null,
   decodeMs: null,
+};
+let modelSetup: Snapshot['modelSetup'] = {
+  state: 'idle',
+  stage: null,
+  progress: null,
+  error: null,
 };
 let speechHandle: SpeechHandle | undefined;
 let speechAbort: AbortController | undefined;
@@ -149,6 +157,7 @@ function snapshot(): Snapshot {
     error,
     speech: speechStatus,
     translation: translationStatus,
+    modelSetup,
   };
 }
 function position(recenter = false) {
@@ -451,12 +460,35 @@ async function applySettings(next: UserSettings) {
     if (!(await audio.listSources()).some((source) => source.id === next.sourceId))
       throw new Error('A fonte não está mais disponível. Atualize a lista.');
   }
-  if (next.sourceId !== previous.sourceId) await endCapture();
+  const languageChanged =
+    next.preferences.sourceLanguage !== previous.preferences.sourceLanguage ||
+    next.preferences.targetLanguage !== previous.preferences.targetLanguage;
+  if ((languageChanged || next.sourceId !== previous.sourceId) && controller.state !== 'idle')
+    await endCapture();
+  modelSetup = { state: 'downloading', stage: 'asr', progress: null, error: null };
+  publish();
   try {
+    const translationModels = await modelManager.ensure(
+      next.preferences.sourceLanguage,
+      next.preferences.targetLanguage,
+      new AbortController().signal,
+      (stage, progress) => {
+        modelSetup = { state: 'downloading', stage, progress, error: null };
+        publish();
+      },
+    );
     if (next.launchAtLogin !== previous.launchAtLogin || next.launchAtLogin)
       await setLogin(next.launchAtLogin);
     await store.save(next);
+    localTranslation = new LocalTranslation(app.getAppPath(), translationModels);
   } catch (cause) {
+    modelSetup = {
+      state: 'error',
+      stage: null,
+      progress: null,
+      error: cause instanceof Error ? cause.message : 'Falha ao preparar os modelos.',
+    };
+    publish();
     try {
       await setLogin(previous.launchAtLogin);
     } catch {
@@ -466,11 +498,42 @@ async function applySettings(next: UserSettings) {
     throw cause;
   }
   userSettings = structuredClone(next);
+  modelSetup = { state: 'ready', stage: null, progress: null, error: null };
+  if (languageChanged) {
+    const languageCodes: Record<string, string> = {
+      'en-US': 'en',
+      'pt-BR': 'pt',
+      it: 'it',
+      fr: 'fr',
+      de: 'de',
+      'zh-CN': 'zh',
+    };
+    localSpeech = new LocalSpeech(
+      app.getAppPath(),
+      next.preferences.sourceLanguage === 'en-US' ? 'base.en' : 'multilingual-base',
+      languageCodes[next.preferences.sourceLanguage],
+    );
+    speechStatus = {
+      ...speechStatus,
+      model: next.preferences.sourceLanguage === 'en-US' ? 'base.en' : 'multilingual-base',
+      available: await localSpeech.available(),
+    };
+  }
+  await stopTranslation();
   error = null;
   if (previous.preferences.translation !== next.preferences.translation) {
     await stopTranslation();
     if (next.preferences.translation && controller.state === 'listening' && controller.segment)
       submitTranslation(controller.segment);
+  }
+  if (languageChanged) {
+    await stopTranslation();
+    translationStatus = {
+      ...translationStatus,
+      state: next.preferences.translation ? 'idle' : 'disabled',
+      error: null,
+      decodeMs: null,
+    };
   }
   publish();
   if (!quitting && next.onboardingComplete && settingsWindow && !settingsWindow.isDestroyed())
@@ -503,10 +566,30 @@ if (hasLock)
   app
     .whenReady()
     .then(async () => {
-      speechStatus.available = await localSpeech.available();
       const loaded = await store.load();
       userSettings = loaded.settings;
       error = loaded.warning;
+      const languageCodes: Record<string, string> = {
+        'en-US': 'en',
+        'pt-BR': 'pt',
+        it: 'it',
+        fr: 'fr',
+        de: 'de',
+        'zh-CN': 'zh',
+      };
+      localSpeech = new LocalSpeech(
+        app.getAppPath(),
+        userSettings.preferences.sourceLanguage === 'en-US' ? 'base.en' : 'multilingual-base',
+        languageCodes[userSettings.preferences.sourceLanguage],
+      );
+      speechStatus.model =
+        userSettings.preferences.sourceLanguage === 'en-US' ? 'base.en' : 'multilingual-base';
+      const installedModels = await modelManager.installedTranslationModels(
+        userSettings.preferences.sourceLanguage,
+        userSettings.preferences.targetLanguage,
+      );
+      localTranslation = new LocalTranslation(app.getAppPath(), installedModels);
+      speechStatus.available = await localSpeech.available();
       translationStatus.available = await localTranslation.available();
       translationStatus.state = userSettings.preferences.translation ? 'idle' : 'disabled';
       try {

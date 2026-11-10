@@ -63,6 +63,13 @@ export interface Snapshot {
   metrics: AudioMetrics;
   speech: SpeechStatus;
   translation: TranslationStatus;
+  modelSetup?: ModelSetupStatus;
+}
+export interface ModelSetupStatus {
+  state: 'idle' | 'downloading' | 'ready' | 'error';
+  stage: 'asr' | 'translation' | null;
+  progress: number | null;
+  error: string | null;
 }
 export type Command =
   | { type: 'toggle-session' }

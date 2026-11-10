@@ -23,7 +23,7 @@ def main():
         import numpy as np
         from faster_whisper import WhisperModel
         root = Path(__file__).resolve().parents[2]
-        directory = root / '.models' / 'base.en'
+        directory = root / '.models' / os.environ.get('HELPER_ASR_MODEL', 'base.en')
         if not all((directory / item).is_file() for item in ('model.bin', 'config.json', 'tokenizer.json', 'vocabulary.txt')):
             emit({'type': 'fatal', 'code': 'model_missing'})
             return
@@ -32,7 +32,9 @@ def main():
     except Exception:
         emit({'type': 'fatal', 'code': 'load_failed'})
         return
-    emit({'type': 'ready', 'model': 'base.en', 'device': 'cpu'})
+    model_id = os.environ.get('HELPER_ASR_MODEL', 'base.en')
+    language = os.environ.get('HELPER_ASR_LANGUAGE', 'en')
+    emit({'type': 'ready', 'model': model_id, 'device': 'cpu'})
     while True:
         line = sys.stdin.buffer.readline(MAX_LINE + 1)
         if not line:
@@ -51,7 +53,7 @@ def main():
                 raise ValueError('audio')
             audio = np.frombuffer(pcm, dtype='<i2').astype(np.float32) / 32768.0
             started = time.monotonic()
-            segments, _ = model.transcribe(audio, language='en', task='transcribe', beam_size=1,
+            segments, _ = model.transcribe(audio, language=language, task='transcribe', beam_size=1,
                                           temperature=0, condition_on_previous_text=False,
                                           vad_filter=True, vad_parameters={'min_silence_duration_ms': 300},
                                           max_new_tokens=128)
