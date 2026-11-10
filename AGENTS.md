@@ -28,6 +28,24 @@
 
 ## Desenvolvimento e validação
 
+### Princípios de engenharia
+
+- **KISS e simplicidade primeiro:** implemente a menor solução que satisfaça os requisitos atuais. Prefira fluxo explícito e legível a abstrações, camadas, dependências ou opções especulativas.
+- **Evitar overengineering:** não antecipar requisitos hipotéticos nem criar frameworks internos para um único caso. Adicione extensão ou configuração quando houver necessidade concreta, com exemplo de uso e benefício claro.
+- **DRY com critério:** mantenha uma única fonte de verdade para regras e dados repetidos. Extraia duplicação quando representar a mesma regra que precisa evoluir em conjunto; não una código apenas por semelhança superficial nem crie abstração genérica prematura.
+- **SOLID aplicado com pragmatismo:** módulos devem ter responsabilidades claras e coesas; dependências apontam para contratos estáveis quando isso reduz acoplamento real; extensões não devem exigir alterações frágeis em muitos consumidores. Interfaces pequenas e substituíveis são preferíveis a contratos grandes. Não aplicar padrões por obrigação se aumentarem a complexidade sem resolver um problema presente.
+- **Legibilidade e escopo:** nomes devem revelar intenção, funções devem manter foco, e mudanças devem ficar limitadas ao escopo pedido. Evite refatorações ou formatação não relacionadas. Preserve contratos existentes ou atualize consumidores e documentação na mesma mudança.
+- **Segurança e ciclo de vida são requisitos de desenho:** mantenha limites entre renderer, processo principal, adaptadores e workers; respeite cancelamento, geração/ID/revisão, permissões mínimas e limpeza de recursos. Não contorne esses limites para simplificar uma implementação.
+
+### TDD estrito
+
+- Para mudanças de comportamento, siga o ciclo **RED → GREEN → REFACTOR**: primeiro escreva um teste que falhe pelo comportamento ausente, execute-o e confirme a falha esperada; implemente a menor alteração para passar; execute os testes relevantes; depois refatore mantendo-os verdes.
+- Não escreva implementação antes do teste que descreve o requisito. O teste deve falhar por motivo funcional esperado, não por erro de configuração, importação ou sintaxe.
+- Mantenha o ciclo curto e focado: um comportamento por vez, teste determinístico, sem rede, microfone pessoal ou dependência de modelos baixados, salvo quando o usuário solicitar explicitamente um ensaio de integração.
+- Em correções, reproduza primeiro o defeito com teste de regressão; em refatorações sem mudança observável, preserve os testes existentes e não invente requisitos.
+- Mudanças puramente documentais ou de configuração sem lógica comportamental não exigem teste de código. Ainda assim, verifique formatação, links e caminhos conforme aplicável.
+- Não declare testes executados se não foram executados; reporte comando, resultado e limitações. Siga as instruções específicas de validação abaixo e use cobertura proporcional ao risco.
+
 - Usar pnpm e manter o lockfile. Neste ambiente, preferir Node 23 via `source /home/vitor-g/.nvm/nvm.sh && nvm use v23`; consultar `package.json` para requisitos e scripts atuais.
 - Instalação: `pnpm install --frozen-lockfile`. Modelos locais: `pnpm setup:local` (download explícito de modelos, não necessário para editar documentação).
 - Desenvolvimento: `pnpm dev`. Verificação: `pnpm check` executa Prettier, tipagem, ESLint, testes unitários e build.
