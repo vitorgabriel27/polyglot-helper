@@ -1,4 +1,6 @@
 import type { Command, Snapshot } from '../core/contracts';
+import { LANGUAGES } from '../core/preferences';
+import type { WheelEvent } from 'react';
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 export function NotchView({
@@ -29,9 +31,17 @@ export function NotchView({
   const navigate = (delta: number) => {
     setHistoryIndex((index) => {
       const next = (index === null ? timeline.length - 1 : index) + delta;
-      return Math.max(0, Math.min(timeline.length - 1, next));
+      const bounded = Math.max(0, Math.min(timeline.length - 1, next));
+      if (index === null && bounded === timeline.length - 1 && delta > 0) return null;
+      return bounded;
     });
   };
+  const navigateWithWheel = (event: WheelEvent<HTMLDivElement>) => {
+    if (!timeline.length || Math.abs(event.deltaY) < 1) return;
+    event.preventDefault();
+    navigate(event.deltaY > 0 ? 1 : -1);
+  };
+  const returnToLive = () => setHistoryIndex(null);
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
     return `${Math.floor(totalSeconds / 60)}:${String(totalSeconds % 60).padStart(2, '0')}`;
@@ -162,7 +172,12 @@ export function NotchView({
       </div>
       {busy &&
         (isAudio ? (
-          <div className="captions live-captions" aria-live="polite" aria-atomic="true">
+          <div
+            className="captions live-captions"
+            aria-live="polite"
+            aria-atomic="true"
+            onWheel={navigateWithWheel}
+          >
             {expanded && timeline.length > 0 && (
               <div className="history-nav" aria-label="Navegação do histórico">
                 <button
@@ -176,6 +191,11 @@ export function NotchView({
                   {selected ? formatTime(selected.startMs) : '0:00'} · {selectedIndex + 1}/
                   {timeline.length}
                 </span>
+                {historyIndex !== null && (
+                  <button className="history-live" onClick={returnToLive}>
+                    Ao vivo
+                  </button>
+                )}
                 <button
                   aria-label="Próximo trecho"
                   onClick={() => navigate(1)}
@@ -202,7 +222,9 @@ export function NotchView({
             <div className="live-status">
               <meter aria-label="Nível do áudio" min={0} max={1} value={snapshot.metrics.rms} />
               <span>
-                {snapshot.speech.state === 'transcribing' ? 'Reconhecendo' : 'Inglês · local'}
+                {snapshot.speech.state === 'transcribing'
+                  ? 'Reconhecendo'
+                  : `${LANGUAGES[snapshot.preferences.sourceLanguage]} · local`}
               </span>
             </div>
             {snapshot.speech.dropped > 0 && (
@@ -213,7 +235,12 @@ export function NotchView({
             )}
           </div>
         ) : (
-          <div className="captions" aria-live="polite" aria-atomic="true">
+          <div
+            className="captions"
+            aria-live="polite"
+            aria-atomic="true"
+            onWheel={navigateWithWheel}
+          >
             {expanded && timeline.length > 0 && (
               <div className="history-nav" aria-label="Navegação do histórico">
                 <button
@@ -227,6 +254,11 @@ export function NotchView({
                   {selected ? formatTime(selected.startMs) : '0:00'} · {selectedIndex + 1}/
                   {timeline.length}
                 </span>
+                {historyIndex !== null && (
+                  <button className="history-live" onClick={returnToLive}>
+                    Ao vivo
+                  </button>
+                )}
                 <button
                   aria-label="Próximo trecho"
                   onClick={() => navigate(1)}
